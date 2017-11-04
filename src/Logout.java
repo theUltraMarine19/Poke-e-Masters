@@ -2,7 +2,6 @@
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,16 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class Home
+ * Servlet implementation class Logout
  */
-@WebServlet("/Home")
-public class Home extends HttpServlet {
+@WebServlet("/Logout")
+public class Logout extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Home() {
+    public Logout() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,24 +28,18 @@ public class Home extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		HttpSession s = request.getSession(false);
 		if(s==null) {
-			response.sendRedirect("Login");			
-			return;
+			response.sendRedirect("Login");	
 		}
 		else {
 			if(s.getAttribute("player_id")==null) {
 				s.invalidate();
 				response.sendRedirect("Login");		
-				return;
 			}			
 		}
-		String player_id = s.getAttribute("player_id").toString();
-		String player_name = Constants.getPlayerName(player_id);
-		request.setAttribute("name", player_name);
-		RequestDispatcher view = request.getRequestDispatcher("home.jsp");
-		view.forward(request, response);	
+		s.invalidate();
+		response.sendRedirect("Login");
 	}
 
 	/**

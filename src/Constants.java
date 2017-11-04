@@ -8,12 +8,13 @@ public class Constants {
 		
 	}
 	
-	public static String addPlayer(String nick_name,String password,String email){
+	public static String addPlayer(String name,String nick_name,String password,String email){
 		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);
-				PreparedStatement pstmt = conn.prepareStatement("INSERT INTO PLAYER(NAME,ID,PASSWORD,EMAIL,CURRCITYID) VALUES(?,nextval('UserID'),?,?,'1')");){
-				pstmt.setString(1, nick_name);
-				pstmt.setString(2, password);
-				pstmt.setString(3, email);
+				PreparedStatement pstmt = conn.prepareStatement("INSERT INTO PLAYER(NAME,NICKNAME,ID,PASSWORD,EMAIL,CURRCITYID) VALUES(?,?,nextval('UserID'),?,?,'1')");){
+				pstmt.setString(1,name);
+				pstmt.setString(2, nick_name);
+				pstmt.setString(3, password);
+				pstmt.setString(4, email);
 				pstmt.executeUpdate();
 				JSONObject json = new JSONObject();
 				json.put("success", true);
@@ -35,7 +36,7 @@ public class Constants {
 	
 	public static String authenticate(String email,String password){
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement pstmt = conn.prepareStatement("select password,id from player where email=?")){
+			PreparedStatement pstmt = conn.prepareStatement("select password,id from player where email=?");){
 			pstmt.setString(1, email);
 			ResultSet r = pstmt.executeQuery();
 			Boolean flag_password=false,flag_email=false;
@@ -83,6 +84,23 @@ public class Constants {
 		}
 		catch(Exception e){
 			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	public static String getPlayerName(String player_id){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select name from player where id=?");){
+			pstmt.setString(1, player_id);
+			ResultSet r = pstmt.executeQuery();
+			String name=null;
+			while(r.next()){
+				name = r.getString(1);
+			}
+			return name;
+		}
+		catch(Exception sqle){
+			System.out.println("Error : "+sqle);
 		}
 		return null;
 	}

@@ -47,7 +47,7 @@ public class AddUser extends HttpServlet {
 			String password = request.getParameter("password");
 			String email = request.getParameter("user_mail");
 			String nick_name = request.getParameter("nick_name");
-			String res = Constants.addPlayer(nick_name, password, email);
+			String res = Constants.addPlayer(first_name+" "+last_name,nick_name, password, email);
 			if(res == null){
 				JSONObject json = new JSONObject();
 				try{

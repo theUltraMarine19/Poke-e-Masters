@@ -77,7 +77,6 @@ public class Login extends HttpServlet {
 					if(json.getBoolean("success")){
 						HttpSession session = request.getSession(true);
 						session.setAttribute("player_id", json.getString("userid"));
-						System.out.println(json.getString("userid"));	
 					}
 					PrintWriter out = response.getWriter();
 					out.println(res);
