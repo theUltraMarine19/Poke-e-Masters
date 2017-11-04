@@ -12,28 +12,28 @@
 <body>
 <div class="container" style = "margin-top: 20px;">
 
-<form method = "post" id = "signup_form">
+<form method = "post" id = "signup_form" >
 <div class ="row" >
 <div class="input-field col s6">
-<input id = "first_name" name="first_name" type = "text" required="true">
+<input id = "first_name" name="first_name" type = "text" class="validate" required="true">
 <label for="first_name">First name</label>
 </div>
 <div class="input-field col s6">
-<input id = "last_name" name="last_name" type = "text" required="true">
+<input id = "last_name" name="last_name" class="validate" type = "text" required="true">
 <label for="last_name">Last name</label>
 </div>
 </div>
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "user_mail" name="user_mail" type = "email" required="true">
+<input id = "user_mail" name="user_mail" class="validate" type = "email" required="true">
 <label for="user_mail">Email</label>
 </div>
 </div>
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "password" name="password" type = "password" pattern=".{8,16}" title="Min 8 characters" required="true">
+<input id = "password" name="password" type = "password" pattern=".{8,15}" title="Min 8 characters" class="validate" required="true">
 <label for="password">Password</label>
 </div>
 </div>
@@ -41,14 +41,14 @@
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "confirm_password" name="confirm_password" type = "password" required="true">
+<input id = "confirm_password" name="confirm_password" type = "password" class="validate" required="true">
 <label for="confirm_password">Confirm password</label><span id='message'></span>
 </div>
 </div>
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "nick_name" name="nick_name" type = "text" title="Only this name will be visible to other users" required="true">
+<input id = "nick_name" name="nick_name" type = "text" class="validate" title="Only this name will be visible to other users" required="true">
 <label for="nick_name">Nickname</label>
 </div>
 </div>
@@ -73,11 +73,20 @@ $(document).ready(function() {
 	    $('#message').html('Not Matching').css('color', 'red');
 	});    
     $('#signup_form').submit(function(){
-    	var str=$('#message').val().toString();
     	if($('#password').val() == $('#confirm_password').val()){
     		var details = $('#signup_form').serialize();
+    		var success;
     		$.post("AddUser",details,function(data){
-    			alert("Response from server : "+data);
+    			var res = JSON.parse(data);
+    			if(res.success){
+    				alert("Successful");
+    				success = true;
+    				window.location.replace("Login");
+    			}
+    			else{
+    				alert("unsuccessful");
+    				success = false;
+    			}
     		});
     		return false;
     	}
