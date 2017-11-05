@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <title>Login</title>
 </head>
 <body>
@@ -24,18 +25,18 @@
 <input id="password" name="password" type="password" pattern=".{8,15}" title="Min 8 characters" class="validate" required>
 <label for="password">Password</label>
 </div>
+<div class= "col s2" style="margin-top:48px;"><a href="ForgotPassword">Forgot password ?</a></div>
 </div>
 <div class = "row">
 <div  class ="input-field col s2 offset-s5">
-  <button class="btn waves-effect waves-light" type="submit" name="action">Login
-  </button>
+  <button class="btn waves-effect waves-light indigo" style="margin-left:8px;" type="submit" name="action">Login</button>
 </div>
 </div>
 </form>
 </div>
 <div class="row" >
 <div class="col s3 offset-s5" style="margin-top:15px">
-<a href="AddUser" class="waves-effect waves-light btn">Signup</a>
+<a href="AddUser" class="waves-effect waves-light btn indigo">Signup</a>
 </div>
 </div>
 </div>

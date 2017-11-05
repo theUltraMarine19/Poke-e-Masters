@@ -15,25 +15,25 @@
 <form method = "post" id = "signup_form" >
 <div class ="row" >
 <div class="input-field col s6">
-<input id = "first_name" name="first_name" type = "text" class="validate" required="true">
+<input id = "first_name" name="first_name" type = "text" class="validate" required>
 <label for="first_name">First name</label>
 </div>
 <div class="input-field col s6">
-<input id = "last_name" name="last_name" class="validate" type = "text" required="true">
+<input id = "last_name" name="last_name" class="validate" type = "text" required>
 <label for="last_name">Last name</label>
 </div>
 </div>
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "user_mail" name="user_mail" class="validate" type = "email" required="true">
+<input id = "user_mail" name="user_mail" class="validate" type = "email" required>
 <label for="user_mail">Email</label>
 </div>
 </div>
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "password" name="password" type = "password" pattern=".{8,15}" title="Min 8 characters" class="validate" required="true">
+<input id = "password" name="password" type = "password" pattern=".{8,15}" title="Min 8 characters" class="validate" required>
 <label for="password">Password</label>
 </div>
 </div>
@@ -41,21 +41,21 @@
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "confirm_password" name="confirm_password" type = "password" class="validate" required="true">
+<input id = "confirm_password" name="confirm_password" type = "password" class="validate" required>
 <label for="confirm_password">Confirm password</label><span id='message'></span>
 </div>
 </div>
 
 <div class = "row">
 <div class="input-field col s12">
-<input id = "nick_name" name="nick_name" type = "text" class="validate" title="Only this name will be visible to other users" required="true">
+<input id = "nick_name" name="nick_name" type = "text" class="validate" title="Only this name will be visible to other users" required>
 <label for="nick_name">Nickname</label>
 </div>
 </div>
 
 <div class = "row">
 <div  class ="input-field col s2 offset-s5">
-  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+  <button class="btn waves-effect waves-light indigo" type="submit" name="action">Submit
   </button>
 </div>
 </div>
@@ -79,12 +79,12 @@ $(document).ready(function() {
     		$.post("AddUser",details,function(data){
     			var res = JSON.parse(data);
     			if(res.success){
-    				alert("Successful");
+    				confirm("We have sent you a verification email, follow the link in your email to complete your signup process");
     				success = true;
     				window.location.replace("Login");
     			}
     			else{
-    				alert("unsuccessful");
+    				confirm("unsuccessful");
     				success = false;
     			}
     		});
