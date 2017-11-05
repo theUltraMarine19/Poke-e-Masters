@@ -14,6 +14,8 @@ import org.json.JSONObject;
 public class Constants {
 	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
+	// public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
+
 	private Constants(){
 		
 	}
