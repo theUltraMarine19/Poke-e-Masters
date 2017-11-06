@@ -1,6 +1,7 @@
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.json.JSONObject;
 
 /**
  * Servlet implementation class Home
@@ -43,6 +46,11 @@ public class Home extends HttpServlet {
 			}			
 		}
 		String player_id = s.getAttribute("player_id").toString();
+		if(!Constants.get_setAvatarChosen(player_id,true,0)){
+			RequestDispatcher view = request.getRequestDispatcher("selectAvatar.jsp");
+			view.forward(request, response);
+			return;
+		}
 		String player_name = Constants.getPlayerName(player_id);
 		request.setAttribute("name", player_name);
 		RequestDispatcher view = request.getRequestDispatcher("home.jsp");
@@ -54,7 +62,42 @@ public class Home extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		HttpSession s = request.getSession(false);
+		if(s==null) {
+			response.sendRedirect("Login");			
+			return;
+		}
+		else {
+			if(s.getAttribute("player_id")==null) {
+				s.invalidate();
+				response.sendRedirect("Login");		
+				return;
+			}			
+		}
+		String player_id = s.getAttribute("player_id").toString();
+		if(request.getMethod().equals("POST")){
+			String function = request.getParameter("function");
+			if(function != null){
+				if(function.equals("avatar")){
+					int src = Integer.parseInt(request.getParameter("src"));
+					Boolean result = Constants.get_setAvatarChosen(player_id, false, src);
+					JSONObject json = new JSONObject();
+					try{
+						if(result){
+							json.put("success", true);
+						}
+						else{
+							json.put("success", false);
+						}
+					}
+					catch(Exception e){
+						System.out.println("Error : "+e);
+					}
+					PrintWriter out = response.getWriter();
+					out.println(json.toString());
+				}
+			}
+		}
 	}
 
 }

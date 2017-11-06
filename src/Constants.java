@@ -45,7 +45,7 @@ public class Constants {
         
 		try{
 			MimeMessage m = new MimeMessage(session);
-			m.setFrom(new InternetAddress("150050101@iitb.ac.in"));
+			m.setFrom(new InternetAddress("noreplay@pokEMasters.com"));
 			m.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
 			m.setSubject(subject);
 			m.setText(body);
@@ -222,5 +222,37 @@ public class Constants {
 				System.out.println("Error : "+sqle);
 			}
 			return null;
+	}
+	
+	public static Boolean get_setAvatarChosen(String id,Boolean flag_get,int src){
+		if(flag_get){
+			try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+				PreparedStatement pstmt = conn.prepareStatement("select avatar_chosen from player where id=?");){
+					pstmt.setString(1,id);
+					ResultSet r = pstmt.executeQuery();
+					while(r.next()){
+						if(r.getInt(1)==0){
+							return false;
+						}
+					}
+					return true;
+			}
+			catch(Exception e){
+				System.out.println("Error : "+e);
+			}
+		}
+		else{
+			try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+					PreparedStatement pstmt = conn.prepareStatement("update player set avatar_chosen=? where id=?");){
+						pstmt.setInt(1,src);
+						pstmt.setString(2,id);
+						pstmt.executeUpdate();
+						return true;
+				}
+				catch(Exception e){
+					System.out.println("Error : "+e);
+				}			
+		}
+		return false;
 	}
 }
