@@ -12,31 +12,19 @@
 </head>
 <body>
 
-<!-- Dropdown Structure -->
-<ul id="dropdown1" class="dropdown-content">
-  <li><a href="#!">Profile</a></li>
-  <li class="divider"></li>
-  <li><a href="#">Contact Us</a></li>
-  <li class="divider"></li>
-  <li><a href="Logout">Logout</a></li>
-</ul>
-<nav>
-  <div class="nav-wrapper indigo">
-    <a href="#" style="margin-left: 10px;" class="brand-logo">Pok-E-Masters</a>
-    <ul class="right hide-on-med-and-down">
-      <li><a href="#">Gym leaders</a></li>
-      <li><a href="#">My Pokemon</a></li>
-      <!-- Dropdown Trigger -->
-      <li><a class="dropdown-button" href="#" data-activates="dropdown1">${name}<i class="material-icons right">arrow_drop_down</i></a></li>
-    </ul>
-  </div>
-</nav>
+<p style="display:none;" id="userName" >${name}</p>
+<div id="navbar"></div>
+
 <div class="container">
 </div>
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){
-		$(".dropdown-button").dropdown();
+		$("#navbar").load("navbar1.html",function(){
+			$(".dropdown-button").dropdown();
+			$("#name_user").text($("#userName").text());
+			$('#cities').addClass('active');
+		});
 	});
 </script>
 </html>

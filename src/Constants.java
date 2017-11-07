@@ -9,13 +9,14 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Constants {
 	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 	// public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
-
+	public static int[] s_id = {1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656};
 	private Constants(){
 		
 	}
@@ -254,5 +255,79 @@ public class Constants {
 				}			
 		}
 		return false;
+	}
+	
+	public static Boolean get_setStarterPokemon(String id,Boolean flag_get,int src){
+		if(flag_get){
+			try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+				PreparedStatement pstmt = conn.prepareStatement("select starter_pokemon from player where id=?");){
+					pstmt.setString(1,id);
+					ResultSet r = pstmt.executeQuery();
+					while(r.next()){
+						if(r.getInt(1)==0){
+							return false;
+						}
+					}
+					return true;
+			}
+			catch(Exception e){
+				System.out.println("Error : "+e);
+			}
+		}
+		else{
+			try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+					PreparedStatement pstmt = conn.prepareStatement("update player set starter_pokemon=? where id=?");){
+						pstmt.setInt(1,src);
+						pstmt.setString(2,id);
+						pstmt.executeUpdate();
+						return true;
+				}
+				catch(Exception e){
+					System.out.println("Error : "+e);
+				}			
+		}
+		return false;
+	}
+	
+	public static JSONObject getPlayerProfileInfo(String player_id){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select name,nickname,experience,money,avatar_chosen from player where id=?");){
+			pstmt.setString(1, player_id);
+			ResultSet r = pstmt.executeQuery();
+			JSONObject json = new JSONObject();
+			while(r.next()){
+				json.put("name",r.getString(1));
+				json.put("nickname",r.getString(2));
+				json.put("exp",r.getInt(3));
+				json.put("money",r.getInt(4));
+				json.put("avatar","./Avatar_images/"+r.getInt(5)+".png");
+			}
+			return json;
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	public static JSONArray getPokedexInfo(){
+		JSONArray arr = new JSONArray();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select pid,name,typelist from pokemon order by coalesce(cast(nullif(pid,'') as float),0)");){
+			ResultSet r = pstmt.executeQuery();
+			while(r.next()){
+				JSONObject json = new JSONObject();
+				json.put("pid", r.getString(1));
+				json.put("name", r.getString(2));
+				String[] typelist = r.getString(3).split(",");
+				json.put("types",typelist);
+				arr.put(json);
+			}
+			return arr;
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
 	}
 }

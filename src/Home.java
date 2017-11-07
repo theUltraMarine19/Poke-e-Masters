@@ -32,16 +32,15 @@ public class Home extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		HttpSession s = request.getSession(false);
-		if(s==null) {
-			response.sendRedirect("Login");			
+		if(s==null) {			
+			response.sendRedirect("Login");
 			return;
 		}
 		else {
 			if(s.getAttribute("player_id")==null) {
-				s.invalidate();
-				response.sendRedirect("Login");		
+				s.invalidate();		
+				response.sendRedirect("Login");
 				return;
 			}			
 		}
@@ -49,7 +48,11 @@ public class Home extends HttpServlet {
 		if(!Constants.get_setAvatarChosen(player_id,true,0)){
 			RequestDispatcher view = request.getRequestDispatcher("selectAvatar.jsp");
 			view.forward(request, response);
-			return;
+		}		
+		if(!Constants.get_setStarterPokemon(player_id, true,0)){
+			request.setAttribute("pids", Constants.s_id);
+			RequestDispatcher view = request.getRequestDispatcher("starterPokemon.jsp");
+			view.forward(request, response);
 		}
 		String player_name = Constants.getPlayerName(player_id);
 		request.setAttribute("name", player_name);
@@ -78,24 +81,28 @@ public class Home extends HttpServlet {
 		if(request.getMethod().equals("POST")){
 			String function = request.getParameter("function");
 			if(function != null){
+				Boolean result=false;
+				int src = Integer.parseInt(request.getParameter("src"));
 				if(function.equals("avatar")){
-					int src = Integer.parseInt(request.getParameter("src"));
-					Boolean result = Constants.get_setAvatarChosen(player_id, false, src);
-					JSONObject json = new JSONObject();
-					try{
-						if(result){
-							json.put("success", true);
-						}
-						else{
-							json.put("success", false);
-						}
-					}
-					catch(Exception e){
-						System.out.println("Error : "+e);
-					}
-					PrintWriter out = response.getWriter();
-					out.println(json.toString());
+					result = Constants.get_setAvatarChosen(player_id, false, src);
 				}
+				else if(function.equals("starter_pokemon")){
+					result = Constants.get_setStarterPokemon(player_id, false, src);
+				}
+				JSONObject json = new JSONObject();
+				try{
+					if(result){
+						json.put("success", true);
+					}
+					else{
+						json.put("success", false);
+					}
+				}
+				catch(Exception e){
+					System.out.println("Error : "+e);
+				}
+				PrintWriter out = response.getWriter();
+				out.println(json.toString());
 			}
 		}
 	}
