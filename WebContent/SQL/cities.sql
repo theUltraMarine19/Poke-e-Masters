@@ -1,0 +1,3 @@
+INSERT INTO City VALUES (NEXTVAL('CityID'),1,'Pallet Town',15,10);
+INSERT INTO City VALUES (NEXTVAL('CityID'),2,'Viridian City',15,10);
+INSERT INTO City VALUES (NEXTVAL('CityID'),4,'Pewter City',15,10);
