@@ -32,7 +32,7 @@
 JSONArray arr = (JSONArray)request.getAttribute("pokemons");
 for(int i=0;i<arr.length();i++){
 	JSONObject json = (JSONObject)arr.get(i);
-	String source = "./front/"+json.getString("pid")+".png";
+	String source = "./Pokemons/front/"+json.getString("pid")+".png";
 	out.println("<tr><td>"+json.getString("pid")+"</td><td>"+json.getString("name")+"</td><td><img class=\"responsive-img \" src=\" "+source+" \" ></td><td><ul>");
 	String[] s = (String[])json.get("types");
 	for(int j=0;j<s.length;j++){

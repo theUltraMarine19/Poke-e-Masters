@@ -13,9 +13,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Constants {
-	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
+	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
+	//public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
 	// public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
+	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
+
 	public static int[] s_id = {1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656};
 	private Constants(){
 		
@@ -300,7 +302,7 @@ public class Constants {
 				json.put("nickname",r.getString(2));
 				json.put("exp",r.getInt(3));
 				json.put("money",r.getInt(4));
-				json.put("avatar","./Avatar_images/"+r.getInt(5)+".png");
+				json.put("avatar","./Avatars/full/"+r.getInt(5)+".png");
 			}
 			return json;
 		}

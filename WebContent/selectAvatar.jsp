@@ -34,8 +34,8 @@ ul li {
 $(document).ready(function(){
 	var i;
 	for(i=0;i<5;i++){
-		$('#first').append('<div class="col s2" ><div class="card-panel hoverable" ><p class="center-align" ><img id="'+(i+1)+'" class="responsive-img" style="height:150px;" src="./Avatar_images/'+(i+1)+'.png" ></p></div></div>');
-		$('#second').append('<div class="col s2" ><div class="card-panel hoverable" ><p class="center-align" ><img id="'+(i+6)+'" class="responsive-img" style="height:150px;" src="./Avatar_images/'+(i+6)+'.png" ></p></div></div>');
+		$('#first').append('<div class="col s2" ><div class="card-panel hoverable" ><p class="center-align" ><img id="'+(i+1)+'" class="responsive-img" style="height:150px;" src="./Avatars/full/'+(i+1)+'.png" ></p></div></div>');
+		$('#second').append('<div class="col s2" ><div class="card-panel hoverable" ><p class="center-align" ><img id="'+(i+6)+'" class="responsive-img" style="height:150px;" src="./Avatars/full/'+(i+6)+'.png" ></p></div></div>');
 	}
 	$(".card-panel").click(function(){
 		var src = $(this).children("p").children("img").attr("id");

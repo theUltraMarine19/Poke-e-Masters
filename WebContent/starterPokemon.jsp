@@ -22,7 +22,7 @@ int[] s_id = (int[])request.getAttribute("pids");
 for(int i=0;i<6;i++){
 	out.println("<div class=\"row \"  ><div class=\"col s3\" ></div>");
 	for(int j=0;j<3;j++){
-		out.println("<div class=\"col s2\" ><div class=\"card-panel hoverable\" ><p class=\"center-align\" ><img id= \""+s_id[i*3+j]+"\" class=\"responsive-img\" src=\"./front/"+s_id[i*3+j]+".png\" ></p></div></div>");
+		out.println("<div class=\"col s2\" ><div class=\"card-panel hoverable\" ><p class=\"center-align\" ><img id= \""+s_id[i*3+j]+"\" class=\"responsive-img\" src=\"./Pokemons/front/"+s_id[i*3+j]+".png\" ></p></div></div>");
 	}
 	out.println("</div>");
 }

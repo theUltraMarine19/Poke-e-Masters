@@ -21,7 +21,7 @@
 <div class="col s2" >
 	<div class="card hoverable">
         <div class="card-image">
-            <img style="height:100px;" src="chariz.png">
+            <img style="height:100px;" src="./Pokemons/front/1.png">
         </div>
         <div class="card-content">
         <h6 class="indigo-text" ><strong>Charizard</strong></h6>
@@ -34,7 +34,7 @@
 <div class="col s2" >
 	<div class="card hoverable">
         <div class="card-image">
-            <img style="height:100px;" src="chariz.png">
+            <img style="height:100px;" src="./Pokemons/front/2.png">
         </div>
         <div class="card-content">
         <h6 class="indigo-text" ><strong>Charizard</strong></h6>
@@ -49,7 +49,7 @@
 <div class="col s2" >
 	<div class="card hoverable">
         <div class="card-image">
-            <img style="height:100px;" src="chariz.png">
+            <img style="height:100px;" src="./Pokemons/front/3.png">
         </div>
         <div class="card-content">
         <h6 class="indigo-text" ><strong>Charizard</strong></h6>
@@ -75,7 +75,7 @@
 <div class="col s2" >
 	<div class="card hoverable">
         <div class="card-image">
-            <img style="height:100px;" src="chariz.png">
+            <img style="height:100px;" src="./Pokemons/front/4.png">
         </div>
         <div class="card-content">
         <h6 class="indigo-text" ><strong>Charizard</strong></h6>
@@ -90,7 +90,7 @@
 <div class="col s2" >
 	<div class="card hoverable">
         <div class="card-image">
-            <img style="height:100px;" src="chariz.png">
+            <img style="height:100px;" src="./Pokemons/front/5.png">
         </div>
         <div class="card-content">
         <h6 class="indigo-text" ><strong>Charizard</strong></h6>
@@ -103,7 +103,7 @@
 <div class="col s2" >
 	<div class="card hoverable">
         <div class="card-image">
-            <img style="height:100px;" src="chariz.png">
+            <img style="height:100px;" src="./Pokemons/front/6.png">
         </div>
         <div class="card-content">
         <h6 class="indigo-text" ><strong>Charizard</strong></h6>

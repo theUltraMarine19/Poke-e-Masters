@@ -49,15 +49,17 @@ public class Home extends HttpServlet {
 			RequestDispatcher view = request.getRequestDispatcher("selectAvatar.jsp");
 			view.forward(request, response);
 		}		
-		if(!Constants.get_setStarterPokemon(player_id, true,0)){
+		else if(!Constants.get_setStarterPokemon(player_id, true,0)){
 			request.setAttribute("pids", Constants.s_id);
 			RequestDispatcher view = request.getRequestDispatcher("starterPokemon.jsp");
 			view.forward(request, response);
 		}
-		String player_name = Constants.getPlayerName(player_id);
-		request.setAttribute("name", player_name);
-		RequestDispatcher view = request.getRequestDispatcher("home.jsp");
-		view.forward(request, response);	
+		else {
+			String player_name = Constants.getPlayerName(player_id);
+			request.setAttribute("name", player_name);
+			RequestDispatcher view = request.getRequestDispatcher("home.jsp");
+			view.forward(request, response);	
+		}
 	}
 
 	/**
