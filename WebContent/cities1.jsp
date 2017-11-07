@@ -16,10 +16,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 <title>Cities</title>
 </head>
-<body>
-
-<p style="display:none;" id="userName" >${name}</p>
-<div id="navbar"></div>
 
 
 	<script type="text/javascript">
@@ -91,13 +87,17 @@
 		    {
 		    	numSteps = 0;
 		    }
-		    $("#panel").html("");
+		    $("#panel").hide();
+		    $("#panelImg").html("");
+		    $("#panelContent").html("");
 		    if (Math.floor((Math.random() * 10) + 1) < numSteps)
 		    {
 		    	var wildId = (Math.floor(Math.random() * 200) + 1)*3;
-		    	$("#panel").append("<p>Wild Pokemon appeared!!!<\p>");
-		    	$("#panel").append("<img src=\"./Pokemons/front/"+wildId+".png\" id=\"imgWild\">");
-		    	$("#panel").append("<form action=\"Battle\" method=\"post\"><input type=\"hidden\" name=\"wildId\" value=\""+wildId+"\"><input type=\"submit\" value=\"Battle\"></form>");
+		    	$("#panel").show();
+				$("#panelImg").append("<img src=\"./Pokemons/front/"+wildId+".png\" id=\"imgWild\">\n");
+		    	$("#panelContent").append("<p>Wild Pokemon appeared!!!<\p><br>");
+		    	$("#panelContent").append("<form action=\"Battle\" method=\"post\"><input type=\"hidden\" name=\"wildId\" value=\""+wildId+"\"><input type=\"submit\" value=\"Battle\"></form>");
+
 		    }
 
 		    if (dummy == 1)
@@ -112,6 +112,8 @@
 <style type="text/css">
 #cont {
     position:relative;
+    left: 300px;
+    top: 70px;
     float: left;
     background-image: url('./Maps/map1.png');
     width: 464px;
@@ -125,13 +127,27 @@
 }
 
 </style>
-<div>
+<body>
+
+<p style="display:none;" id="userName" >${name}</p>
+<div id="navbar"></div>
 	<div id="cont">
 		<img src="./Avatars/mini/1.png" id="img2">
 	</div>
-	<div id="panel" style="float: left;">
+<div class="container" >
+<div class="row" >
+<div class="col s6" ></div>
+<div class="col s2" >
+	<div class="card hoverable" style="display:none;margin-top: 70px;" id="panel">
+        <div class="card-image" id="panelImg">
+        </div>
+        <div class="card-content" id="panelContent">
+        </div>
 	</div>
 </div>
+</div>
+</div>
+
 </body>
 <script type="text/javascript">
 

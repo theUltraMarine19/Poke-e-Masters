@@ -42,12 +42,11 @@ public class Battle extends HttpServlet {
 				return;
 			}			
 		}
-		String player_id = s.getAttribute("player_id").toString();
-		
+			String player_id = s.getAttribute("player_id").toString();
 			String player_name = Constants.getPlayerName(player_id);
 			request.setAttribute("name", player_name);
 			RequestDispatcher view = request.getRequestDispatcher("battle.jsp");
-			view.forward(request, response);	
+			view.forward(request, response);
 	}
 
 	/**
