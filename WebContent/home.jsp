@@ -13,9 +13,9 @@
 <body>
 
 <p style="display:none;" id="userName" >${name}</p>
-<div id="navbar"></div>
+<div id="navbar" style="opacity:0;" ></div>
 
-<div class="container">
+<div class="container" style="opacity:0;" >
 </div>
 </body>
 <script type="text/javascript">
@@ -23,7 +23,8 @@
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
-			$('#cities').addClass('active');
+			$("#navbar").css({opacity:"1"});
+			$(".container").animate({opacity:"1"},1000);
 		});
 	});
 </script>

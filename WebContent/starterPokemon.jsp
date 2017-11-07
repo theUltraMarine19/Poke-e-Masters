@@ -11,7 +11,7 @@
 <title>Select your first pokemon</title>
 </head>
 <body>
-<div class="container" >
+<div class="container" style="opacity:0;"  >
 <div class="row" >
 <div class="col s6 offset-s3" >
 <h4 class="indigo-text" >Choose your starter pokemon</h4>
@@ -31,6 +31,7 @@ for(int i=0;i<6;i++){
 </body>
 <script type="text/javascript">
 $(document).ready(function(){
+	$(".container").animate({opacity : "1"},1500);
 	$(".card-panel").click(function(){
 		var src = $(this).children("p").children("img").attr("id");
 		$.post("Home",{"function":"starter_pokemon","src":src},function(data){

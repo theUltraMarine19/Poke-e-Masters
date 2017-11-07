@@ -16,7 +16,7 @@ ul li {
 </style>
 </head>
 <body>
-<div class="container" >
+<div class="container" style="opacity:0;" >
 <div class="row" >
 <div class="col s4 offset-s4" >
 <h4 class="indigo-text" >Choose your Avatar</h4>
@@ -37,6 +37,7 @@ $(document).ready(function(){
 		$('#first').append('<div class="col s2" ><div class="card-panel hoverable" ><p class="center-align" ><img id="'+(i+1)+'" class="responsive-img" style="height:150px;" src="./Avatars/full/'+(i+1)+'.png" ></p></div></div>');
 		$('#second').append('<div class="col s2" ><div class="card-panel hoverable" ><p class="center-align" ><img id="'+(i+6)+'" class="responsive-img" style="height:150px;" src="./Avatars/full/'+(i+6)+'.png" ></p></div></div>');
 	}
+	$(".container").animate({opacity:"1"},1500);
 	$(".card-panel").click(function(){
 		var src = $(this).children("p").children("img").attr("id");
 		$.post("Home",{"function":"avatar","src":src},function(data){

@@ -11,7 +11,7 @@
 <title>Forgot password ?</title>
 </head>
 <body>
-<div class="container" >
+<div class="container" style="opacity:0;" >
 <div class="row" style="margin-top:250px;" >
 <form id="forgotpassword_form" >
 <div class="row">
@@ -29,6 +29,7 @@
 </body>
 <script type="text/javascript">
 $(document).ready(function(){
+	$(".container").animate({opacity:"1"});
 	$('#forgotpassword_form').submit(function(){
 		var details = $('#forgotpassword_form').serialize(); 
 		$.post('ForgotPassword',details,function(data){
