@@ -11,7 +11,7 @@
 <title>Login</title>
 </head>
 <body>
-<div class="container">
+<div class="container" style="opacity:0;" >
 <div class="row" style="margin-top:200px;">
 <form id="login_form">
 <div class="row">
@@ -42,6 +42,7 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
+	$(".container").animate({opacity:"1"},1500);
 	$('#login_form').submit(function(){
 		var details = $('#login_form').serialize();
 		var success;

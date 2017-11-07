@@ -15,9 +15,9 @@
 </head>
 <body>
 <p style="display:none;" id="userName" >${name}</p>
-<div id="navbar"></div>
-<div class="container" >
-<div id="table_div" style="display:none;" >
+<div id="navbar" style="opacity:0;" ></div>
+<div class="container" style="opacity:0;">
+<div id="table_div">
 <table id="myTable" class="display" cellspacing="0" width="100%" >
 <thead>
 <tr>
@@ -51,8 +51,9 @@ for(int i=0;i<arr.length();i++){
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
-			$('#pokedex').addClass('active');			
-			$('#table_div').css("display","block");
+			$('#pokedex').addClass('active');
+			$("#navbar").css({opacity:"1"});
+			$(".container").animate({opacity:"1"},1500);
 		});
 		$('#myTable').DataTable({"lengthChange":false});
 	});

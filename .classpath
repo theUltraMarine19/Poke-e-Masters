@@ -13,8 +13,8 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="/home/hp/Desktop/SEM 5/DB lab/java-json.jar"/>
-	<classpathentry kind="lib" path="/home/hp/Desktop/SEM 5/DB lab/postgresql-42.1.4.jar"/>
-	<classpathentry kind="lib" path="/home/hp/Desktop/SEM 5/DB lab/javax.mail.jar"/>
+	<classpathentry kind="lib" path="/home/jeyasoorya/workspace/PokeEMasters/postgresql-42.1.4.jar"/>
+	<classpathentry kind="lib" path="/home/jeyasoorya/workspace/PokeEMasters/javax.mail.jar"/>
+	<classpathentry kind="lib" path="/home/jeyasoorya/workspace/PokeEMasters/java-json.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

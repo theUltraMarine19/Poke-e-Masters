@@ -14,8 +14,9 @@
 <body>
 <% JSONObject json = (JSONObject)request.getAttribute("player"); %>
 <p style="display:none;" id="userName" ><% out.println(json.getString("name")); %></p>
-<div id="navbar"></div>
+<div id="navbar" style="opacity:0;" ></div>
 <div class="container" >
+<div  id="profile_content" style="margin-top:20cm;" >
 <div class="row" >
 <div class="col s3" ></div>
 <div class="col s2" >
@@ -114,12 +115,15 @@
 </div>
 </div>
 </div>
+</div>
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
+			$("#navbar").css({opacity:"1"});
+			$("#profile_content").animate({marginTop:"0cm"},1000);
 		});
 	});
 </script>

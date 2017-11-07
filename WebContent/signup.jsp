@@ -10,7 +10,7 @@
 <title>Signup</title>
 </head>
 <body>
-<div class="container" style = "margin-top: 20px;">
+<div class="container" style = "margin-top: 20px;opacity:0;">
 
 <form method = "post" id = "signup_form" >
 <div class ="row" >
@@ -65,6 +65,7 @@
 </body>
 <script type="text/javascript">
 $(document).ready(function() {
+	$(".container").animate({opacity:"1"},1500);
     $('select').material_select();
 	$('#password, #confirm_password').on('keyup', function () {
 	  if ($('#password').val() == $('#confirm_password').val()) {

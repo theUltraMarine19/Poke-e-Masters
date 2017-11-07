@@ -19,7 +19,7 @@
 <body>
 
 <p style="display:none;" id="userName" >${name}</p>
-<div id="navbar"></div>
+<div id="navbar" ></div>
 
 
 	<script type="text/javascript">
