@@ -123,9 +123,10 @@ CREATE TABLE Pokemon
       BaseDefence INT NOT NULL,
       MoveList VARCHAR(100) DEFAULT '0',
       TypeList VARCHAR(50) NOT NULL,
-      -- MinEvolveLevel INT,
-      -- EvolveIntoID VARCHAR(4),
       BaseLevel INT DEFAULT 5,
+      MinEvolveLevel INT,
+      EvolveIntoID VARCHAR(4),
+      EvolveTrigger VARCHAR(20),
       PRIMARY KEY (PID)
       -- FOREIGN KEY (EvolveIntoID) REFERENCES Pokemon(PID) ON DELETE SET NULL,
       -- FOREIGN KEY (TypeID) REFERENCES PokemonType(TypeID) ON DELETE SET DEFAULT
