@@ -282,6 +282,18 @@ public class Constants {
 						pstmt.setInt(1,src);
 						pstmt.setString(2,id);
 						pstmt.executeUpdate();
+						PreparedStatement pstmt2 = conn.prepareStatement("select basehp from pokemon where pid=?");
+						pstmt2.setString(1,Integer.toString(src));
+						ResultSet r = pstmt2.executeQuery();
+						int basehp=0;
+						while(r.next()){
+							basehp = r.getInt(1);
+						}
+						PreparedStatement pstmt1 = conn.prepareStatement("insert into playerpokemon values(10,'1',?,1024,1,?,?)");
+						pstmt1.setInt(1, basehp);
+						pstmt1.setString(2,id);
+						pstmt1.setString(3,Integer.toString(src));
+						pstmt1.executeUpdate();
 						return true;
 				}
 				catch(Exception e){
@@ -304,6 +316,22 @@ public class Constants {
 				json.put("money",r.getInt(4));
 				json.put("avatar","./Avatars/full/"+r.getInt(5)+".png");
 			}
+			PreparedStatement pstmt1 = conn.prepareStatement("select pp.uid,p.pid,name,level,currenthp,basehp,teamposition,typelist from pokemon p,playerpokemon pp where p.pid=pp.pid and id=?");
+			pstmt1.setString(1,player_id);
+			ResultSet r1=pstmt1.executeQuery();
+			JSONArray arr = new JSONArray();
+			while(r1.next()){
+				JSONObject temp = new JSONObject();
+				temp.put("uid",r1.getString(1));
+				temp.put("pid",r1.getString(2));
+				temp.put("name",r1.getString(3));
+				temp.put("level",r1.getInt(4));
+				temp.put("teamposition",r1.getInt(7));
+				String[] types = r1.getString(8).split(",");
+				temp.put("types",types);
+				arr.put(temp);
+			}
+			json.put("pokemons_caught",arr);
 			return json;
 		}
 		catch(Exception e){
@@ -326,6 +354,58 @@ public class Constants {
 				arr.put(json);
 			}
 			return arr;
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	public static String getPokemonInfo(String pid){
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select * from pokemon where pid=?");){
+			pstmt.setString(1, pid);
+			ResultSet r = pstmt.executeQuery();
+			json.put("success",false);
+			while(r.next()){
+				json.put("success",true);
+				json.put("pid", r.getString(1));
+				json.put("name",r.getString(2));
+				json.put("BaseHP",r.getInt(3));
+				json.put("BaseAttack",r.getInt(4));
+				json.put("BaseSpeed",r.getInt(5));
+				json.put("BaseDefence",r.getInt(6));
+				json.put("Types",r.getString(8));
+			}
+			return json.toString();
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	public static String getPlayerPokemonTeamInfo(String player_id){
+		JSONArray arr = new JSONArray();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select pp.uid,p.pid,name,level,currenthp,basehp,teamposition,typelist from pokemon p,playerpokemon pp where p.pid=pp.pid and id=? and teamposition=1 order by uid");){
+			pstmt.setString(1, player_id);
+			ResultSet r = pstmt.executeQuery();
+			while(r.next()){
+				JSONObject temp = new JSONObject();
+				temp.put("uid",r.getString(1));
+				temp.put("pid",r.getString(2));
+				temp.put("name",r.getString(3));
+				temp.put("level",r.getInt(4));
+				temp.put("teamposition",r.getInt(7));
+				String[] types = r.getString(8).split(",");
+				temp.put("types",types);
+				temp.put("currenthp", r.getInt(5));
+				temp.put("basehp",r.getInt(6));
+				arr.put(temp);
+			}
+			return arr.toString();
 		}
 		catch(Exception e){
 			System.out.println("Error : "+e);

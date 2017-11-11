@@ -1,6 +1,7 @@
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -66,7 +67,39 @@ public class Profile extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		HttpSession s = request.getSession(false);
+		if(s==null) {			
+			response.sendRedirect("Login");
+			return;
+		}
+		else {
+			if(s.getAttribute("player_id")==null) {
+				s.invalidate();		
+				response.sendRedirect("Login");
+				return;
+			}			
+		}
+		String player_id = s.getAttribute("player_id").toString();
+		if(!Constants.get_setAvatarChosen(player_id,true,0)){
+			RequestDispatcher view = request.getRequestDispatcher("selectAvatar.jsp");
+			view.forward(request, response);
+		}	
+		else if(!Constants.get_setStarterPokemon(player_id, true,0)){
+			request.setAttribute("pids", Constants.s_id);
+			RequestDispatcher view = request.getRequestDispatcher("starterPokemon.jsp");
+			view.forward(request, response);
+		}
+		else if(request.getMethod().equals("POST")){
+			String function = request.getParameter("function");
+			if(function == null){
+				return;
+			}
+			if(function.equals("Get team info")){
+				String arr = Constants.getPlayerPokemonTeamInfo(player_id);
+				PrintWriter out = response.getWriter();
+				out.println(arr);
+			}
+		}
 	}
 
 }

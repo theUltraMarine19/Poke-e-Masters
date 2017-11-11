@@ -5,12 +5,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+ <link rel="stylesheet" href="./materialize/css/materialize.min.css">
+ <link rel="stylesheet" href="./DataTables/datatables.min.css">
  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+  <script type="text/javascript" src="./javascript/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="./DataTables/datatables.min.js"></script>
+  <script src="./materialize/js/materialize.min.js"></script>
 <title>Pokedex</title>
 </head>
 <body>
@@ -44,10 +44,28 @@ for(int i=0;i<arr.length();i++){
 </tbody>
 </table>
 </div>
+  <div id="modal1" class="modal" style="margin-top:100px">
+    <div class="modal-content">
+    <div class="row" >
+    <div class="col s2" ></div>
+    <div class="col s4" ><h5 id="pokename" >Name</h5><img id="pokeimg" class="responsive-img" alt="No-img" src="./Pokemons/front/1.png"></div>
+    <div class="col s6" >
+    
+      <p id="BaseHP">Alvin</p>
+      <p id="BaseAttack">Alvin</p>
+      <p id="BaseSpeed">Alvin</p>
+      <p id="BaseDefence">Alvin</p>
+      <p id="Types">Alvin</p>
+    
+    </div>
+    </div>
+    </div>
+  </div>
 </div>
 </body>
 <script type="text/javascript">
 	$(document).ready(function(){
+		$('.modal').modal();
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
@@ -55,7 +73,23 @@ for(int i=0;i<arr.length();i++){
 			$("#navbar").css({opacity:"1"});
 			$(".container").animate({opacity:"1"},1500);
 		});
-		$('#myTable').DataTable({"lengthChange":false});
+		var table = $('#myTable').DataTable({"lengthChange":false});
+		$("#myTable tbody").on('click','tr',function(){
+			var c = table.row(this).data();
+			$.post("Pokedex",{"pid":c[0]},function(data){
+				var res = JSON.parse(data);
+				if(res.success){
+					$("#pokename").text(res.name);
+					$("#pokeimg").attr({"src":"./Pokemons/front/"+res.pid+".png"});
+					$("#BaseHP").text("BaseHP : " + res.BaseHP);
+					$("#BaseAttack").text("BaseAttack : " + res.BaseAttack);
+					$("#BaseSpeed").text("BaseSpeed : " + res.BaseSpeed);
+					$("#BaseDefence").text("BaseDefence : " + res.BaseDefence);
+					$("#Types").text("Type : " + res.Types);
+					$("#modal1").modal("open");	
+				}
+			});
+		});
 	});
 </script>
 </html>
