@@ -52,7 +52,7 @@ CREATE TABLE Player
       Password VARCHAR(15) NOT NULL,
       Email VARCHAR(30) NOT NULL UNIQUE,
       Experience INT DEFAULT 0,
-      Money INT DEFAULT 0,
+      Money INT DEFAULT 1000,
       CurrCityId VARCHAR(4),
       email_verified VARCHAR(10),
       avatar_chosen INT DEFAULT 0,
@@ -143,7 +143,7 @@ CREATE TABLE PlayerPokemon
       PID VARCHAR(4),
       IV INT DEFAULT 0,
       EV INT DEFAULT 50,
-      PRIMARY KEY (UID, ID, PID),
+      PRIMARY KEY (UID, ID),
       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
 );
@@ -152,6 +152,7 @@ CREATE TABLE HasAttack
 (
       PID VARCHAR(4),
       AttackID VARCHAR(4),
+      LevelLearnedAt INT,
       PRIMARY KEY (PID, AttackID),
       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE,
       FOREIGN KEY (AttackID) REFERENCES Attack(AttackID) ON DELETE CASCADE
@@ -187,6 +188,17 @@ CREATE TABLE WildBattleHist
       PRIMARY KEY (BattleID),
       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
+);
+
+CREATE TABLE PlayerPokemonMoves
+(
+      ID VARCHAR(8),
+      UID VARCHAR(4),
+      AttackID VARCHAR(4),
+      PP INT,
+      PRIMARY KEY(ID,UID,AttackID),
+      FOREIGN KEY(ID,UID) REFERENCES PlayerPokemon(ID,UID) ON DELETE CASCADE,
+      FOREIGN KEY(AttackID) REFERENCES Attack(AttackID) ON DELETE CASCADE
 );
 
 CREATE SEQUENCE UserID START 1;

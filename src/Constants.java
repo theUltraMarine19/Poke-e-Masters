@@ -289,11 +289,22 @@ public class Constants {
 						while(r.next()){
 							basehp = r.getInt(1);
 						}
+						int x = (int)Math.floor(((basehp+0)*2 + Math.floor(Math.ceil(Math.sqrt(50))/4))*10/100)+20;
 						PreparedStatement pstmt1 = conn.prepareStatement("insert into playerpokemon values(10,'1',?,1024,1,?,?)");
-						pstmt1.setInt(1, basehp);
+						pstmt1.setInt(1, x);
 						pstmt1.setString(2,id);
 						pstmt1.setString(3,Integer.toString(src));
 						pstmt1.executeUpdate();
+						PreparedStatement pstmt3 = conn.prepareStatement("select hasattack.attackid,attack.pp from hasattack,attack where hasattack.attackid=attack.attackid and hasattack.pid=? and hasattack.levellearnedat <= 10 limit 4");
+						pstmt3.setString(1, Integer.toString(src));
+						ResultSet r1 = pstmt3.executeQuery();
+						PreparedStatement pstmt4 = conn.prepareStatement("insert into playerpokemonmoves values(?,'1',?,?)");
+						pstmt4.setString(1, id);
+						while(r1.next()){		
+							pstmt4.setString(2, r1.getString(1));
+							pstmt4.setInt(3, r1.getInt(2));
+							pstmt4.executeUpdate();
+						}
 						return true;
 				}
 				catch(Exception e){
@@ -363,6 +374,7 @@ public class Constants {
 	
 	public static String getPokemonInfo(String pid){
 		JSONObject json = new JSONObject();
+		JSONArray pokeMoves = new JSONArray();
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
 			PreparedStatement pstmt = conn.prepareStatement("select * from pokemon where pid=?");){
 			pstmt.setString(1, pid);
@@ -378,6 +390,16 @@ public class Constants {
 				json.put("BaseDefence",r.getInt(6));
 				json.put("Types",r.getString(8));
 			}
+			PreparedStatement pstmt1 = conn.prepareStatement("select hasattack.attackid,attack.name from attack,hasattack where hasattack.attackid=attack.attackid and hasattack.pid=?");
+			pstmt1.setString(1, pid);
+			ResultSet r1 = pstmt1.executeQuery();
+			while(r1.next()){
+				JSONObject temp = new JSONObject();
+				temp.put("A_ID", "#"+r1.getString(1));
+				temp.put("A_Name",r1.getString(2));
+				pokeMoves.put(temp);
+			}
+			json.put("Attacks",pokeMoves);
 			return json.toString();
 		}
 		catch(Exception e){
@@ -389,7 +411,7 @@ public class Constants {
 	public static String getPlayerPokemonTeamInfo(String player_id){
 		JSONArray arr = new JSONArray();
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement pstmt = conn.prepareStatement("select pp.uid,p.pid,name,level,currenthp,basehp,teamposition,typelist from pokemon p,playerpokemon pp where p.pid=pp.pid and id=? and teamposition=1 order by uid");){
+			PreparedStatement pstmt = conn.prepareStatement("select pp.uid,p.pid,name,level,currenthp,basehp,teamposition,typelist,ev,iv from pokemon p,playerpokemon pp where p.pid=pp.pid and id=? and teamposition=1 order by uid");){
 			pstmt.setString(1, player_id);
 			ResultSet r = pstmt.executeQuery();
 			while(r.next()){
@@ -402,7 +424,9 @@ public class Constants {
 				String[] types = r.getString(8).split(",");
 				temp.put("types",types);
 				temp.put("currenthp", r.getInt(5));
-				temp.put("basehp",r.getInt(6));
+				int ev=r.getInt(9),iv=r.getInt(10),lvl=r.getInt(4);
+				int x = (int)Math.floor(((r.getInt(6)+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
+				temp.put("basehp",x);
 				arr.put(temp);
 			}
 			return arr.toString();
@@ -411,5 +435,97 @@ public class Constants {
 			System.out.println("Error : "+e);
 		}
 		return null;
+	}
+	
+	public static String getPlayerPokemonStats(String uid,String player_id){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
+			PreparedStatement pstmt = conn.prepareStatement("select level,currenthp,experience,iv,ev,basehp,baseattack,basespeed,basedefence,name,playerpokemon.pid from playerpokemon,pokemon where playerpokemon.pid=pokemon.pid and uid=? and id=?");
+			pstmt.setString(1, uid);
+			pstmt.setString(2,player_id);
+			ResultSet r = pstmt.executeQuery();
+			JSONObject json = new JSONObject();
+			while(r.next()){
+				int lvl = r.getInt(1),currHP = r.getInt(2),exp = r.getInt(3),iv = r.getInt(4),ev = r.getInt(5);
+				int bHP = r.getInt(6),battack = r.getInt(7),bspeed = r.getInt(8),bdef = r.getInt(9);
+				String name = r.getString(10),pokemonID=r.getString(11);
+				JSONArray currMoves = new JSONArray();
+				JSONArray availableMoves = new JSONArray();
+				PreparedStatement pstmt1 = conn.prepareStatement("select playerpokemonmoves.attackid,attack.name from attack,playerpokemonmoves where playerpokemonmoves.attackid=attack.attackid and playerpokemonmoves.id=? and playerpokemonmoves.uid=?");
+				pstmt1.setString(1, player_id);
+				pstmt1.setString(2, uid);
+				ResultSet r1 = pstmt1.executeQuery();
+				while(r1.next()){
+					JSONObject temp = new JSONObject();
+					temp.put("A_ID","#"+r1.getString(1));
+					temp.put("A_Name",r1.getString(2));
+					currMoves.put(temp);
+				}
+				json.put("CurrentMoves",currMoves);
+				PreparedStatement pstmt2 = conn.prepareStatement("select hasattack.attackid,attack.name from hasattack,attack where hasattack.attackid=attack.attackid and hasattack.pid=? and levellearnedat <= ?");
+				pstmt2.setString(1,pokemonID);
+				pstmt2.setInt(2,lvl);
+				ResultSet r2 = pstmt2.executeQuery();
+				while(r2.next()){
+					JSONObject temp = new JSONObject();
+					temp.put("A_ID","#"+r2.getString(1));
+					temp.put("A_Name",r2.getString(2));
+					availableMoves.put(temp);
+				}
+				json.put("AvailableMoves",availableMoves);
+				json.put("Level",lvl);
+				json.put("Exp",exp);
+				json.put("Name",name);
+				json.put("currHP",currHP);				
+				double x = Math.floor(((bHP+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
+				json.put("MaxHP",x);
+				x = Math.floor(((battack+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+				json.put("Attack",x);
+				x = Math.floor(((bspeed+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+				json.put("Speed",x);
+				x = Math.floor(((bdef+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+				json.put("Defence",x);
+			}
+			return json.toString();
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	public static String addRemoveFromTeam(String uid,String player_id,boolean addFlag){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
+			PreparedStatement pstmt = conn.prepareStatement("select count(teamposition) from playerpokemon where teamposition=1 and id=?");
+			pstmt.setString(1, player_id);
+			int teamCount=0;
+			ResultSet r = pstmt.executeQuery();
+			while(r.next()){
+				teamCount = r.getInt(1);
+			}
+			if(addFlag){
+				if(teamCount<6){
+					String[] UID = uid.split(" ");
+					uid = UID[2];
+					PreparedStatement pstmt1 = conn.prepareStatement("update playerpokemon set teamposition=1 where id=? and uid=?");
+					pstmt1.setString(1, player_id);
+					pstmt1.setString(2, uid);
+					pstmt1.executeUpdate();					
+				}				
+			}
+			else{
+				if(teamCount>1){
+					String[] UID = uid.split(" ");
+					uid = UID[2];
+					PreparedStatement pstmt1 = conn.prepareStatement("update playerpokemon set teamposition=0 where id=? and uid=?");
+					pstmt1.setString(1,player_id);
+					pstmt1.setString(2, uid);
+					pstmt1.executeUpdate();	
+				}
+			}
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return Constants.getPlayerPokemonTeamInfo(player_id);
 	}
 }

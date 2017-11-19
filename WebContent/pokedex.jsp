@@ -44,19 +44,23 @@ for(int i=0;i<arr.length();i++){
 </tbody>
 </table>
 </div>
-  <div id="modal1" class="modal" style="margin-top:100px">
+  <div id="modal1" class="modal">
     <div class="modal-content">
     <div class="row" >
-    <div class="col s2" ></div>
-    <div class="col s4" ><h5 id="pokename" >Name</h5><img id="pokeimg" class="responsive-img" alt="No-img" src="./Pokemons/front/1.png"></div>
-    <div class="col s6" >
-    
+    <div class="col s1" ></div>
+    <div class="col s2" ><h5 id="pokename" class="indigo-text" >Name</h5><img id="pokeimg" class="responsive-img" alt="No-img" src="./Pokemons/front/1.png"></div>
+    <div class="col s1" ></div>
+    <div class="col s4" >
+    <h6 class="indigo-text" ><strong>Stats</strong></h6>
       <p id="BaseHP">Alvin</p>
       <p id="BaseAttack">Alvin</p>
       <p id="BaseSpeed">Alvin</p>
       <p id="BaseDefence">Alvin</p>
       <p id="Types">Alvin</p>
     
+    </div>
+    <div id="pokeAttacks" class="col s4">
+    <h6 class="indigo-text" ><strong>Available Attacks</strong></h6>
     </div>
     </div>
     </div>
@@ -86,6 +90,12 @@ for(int i=0;i<arr.length();i++){
 					$("#BaseSpeed").text("BaseSpeed : " + res.BaseSpeed);
 					$("#BaseDefence").text("BaseDefence : " + res.BaseDefence);
 					$("#Types").text("Type : " + res.Types);
+					var attacks = res.Attacks;
+					var i;
+					$("#pokeAttacks").html("<h6 class=\"indigo-text\"><strong>Available Attacks</strong></h6>");
+					for(i=0;i<attacks.length;i++){
+						$("#pokeAttacks").append("<p>"+attacks[i].A_ID+" "+attacks[i].A_Name+"</p>");
+					}
 					$("#modal1").modal("open");	
 				}
 			});

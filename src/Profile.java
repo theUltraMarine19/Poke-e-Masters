@@ -99,6 +99,21 @@ public class Profile extends HttpServlet {
 				PrintWriter out = response.getWriter();
 				out.println(arr);
 			}
+			else if(function.equals("Get pokemon stats")){
+				String pokestats = Constants.getPlayerPokemonStats(request.getParameter("uid"), player_id);
+				PrintWriter out = response.getWriter();
+				out.println(pokestats);
+			}
+			else if(function.equals("Add to my team")){
+				String newTeam = Constants.addRemoveFromTeam(request.getParameter("uid"), player_id,true);
+				PrintWriter out = response.getWriter();
+				out.println(newTeam);
+			}
+			else if(function.equals("Remove from my team")){
+				String newTeam = Constants.addRemoveFromTeam(request.getParameter("uid"), player_id, false);
+				PrintWriter out = response.getWriter();
+				out.println(newTeam);
+			}
 		}
 	}
 

@@ -50,7 +50,6 @@ $(document).ready(function(){
 			var obj = JSON.parse(data);
 			success = obj.success;
 			if(success){
-				alert(obj.status+" "+obj.userid);
 				window.location.replace("Home");
 			}
 			else{

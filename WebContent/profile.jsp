@@ -21,58 +21,15 @@
 <div  id="profile_content" style="opacity:0;" >
 <h4 class="indigo-text" >Pokemon Team</h4>
 <div class="row" >
-<div class="col s3" ></div>
-<div class="col s2" >
-	<div class="card hoverable">
-	<div id="pokemon1"  style="visibility:hidden;" >
-        <div class="card-image">
-            <img style="height:100px;" src="./Pokemons/front/1.png">
-        </div>
-        <div class="card-content">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-        <p>a</p>
-        <p>b</p>
-        <p>c</p>
-        </div>
-	</div>
-	</div>
-</div>
-<div class="col s2" ></div>
-<div class="col s2" >
-	<div class="card hoverable">
-	<div id="pokemon2" style="visibility:hidden;">
-        <div class="card-image">
-            <img style="height:100px;" src="./Pokemons/front/2.png">
-        </div>
-        <div class="card-content">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-         <p>a</p>
-        <p>b</p>
-        <p>c</p>
-        </div>
-	</div>
-	</div>
-</div>
+<% 
+for(int i=0;i<6;i++){
+	String id="\"pokemon"+(i+1)+"\"";	
+    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><img style=\"height:100px\" src=\"./Pokemons/front/1.png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>#Partner : 1</p><p>Level : 10</p><p>HP : 100/100</p><a class=\"rmteam red-text\" href=\"#\" >Remove</a></div></div></div></div>");
+}
+%>
 </div>
 <div class="row" >
-<div class="col s1" ></div>
-<div class="col s2" >
-	<div class="card hoverable">
-    <div id="pokemon3" style="visibility:hidden;" >
-        <div class="card-image">
-            <img style="height:100px;" src="./Pokemons/front/3.png">
-        </div>
-        <div class="card-content">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-         <p>a</p>
-        <p>b</p>
-        <p>c</p>
-        </div>
-	</div>
-	</div>
-</div>
-<div class="col s2" ></div>
-<div class="col s2" >
+<div class="col s2 offset-s5" >
 	<div class="card hoverable">
         <div class="card-image">
             <img class="responsive-img" style="height:200px;" src=<% out.println(json.getString("avatar")); %> >
@@ -84,56 +41,6 @@
         </div>
 	</div>
 </div>
-<div class="col s2" ></div>
-<div class="col s2" >
-	<div class="card hoverable">
-    <div id="pokemon4" style="visibility:hidden;" >
-        <div class="card-image">
-            <img style="height:100px;" src="./Pokemons/front/4.png">
-        </div>
-        <div class="card-content">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-         <p>a</p>
-        <p>b</p>
-        <p>c</p>
-        </div>
-	</div>
-	</div>
-</div>
-</div>
-<div class="row" >
-<div class="col s3" ></div>
-<div class="col s2" >
-	<div class="card hoverable">
-	<div id="pokemon5" style="visibility:hidden" >
-        <div class="card-image">
-            <img style="height:100px;" src="./Pokemons/front/5.png">
-        </div>
-        <div class="card-content">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-        <p>a</p>
-        <p>b</p>
-        <p>c</p>
-        </div>
-	</div>
-	</div>
-</div>
-<div class="col s2" ></div>
-<div class="col s2" >
-	<div class="card hoverable">
-     <div id="pokemon6" style="visibility:hidden" >
-        <div class="card-image">
-            <img style="height:100px;" src="./Pokemons/front/6.png">
-        </div>
-        <div class="card-content">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-         <p>a</p>
-        <p>b</p>
-        <p>c</p>
-        </div>
-	</div>
-	</div>
-</div>
 </div>
 <div class="divider" ></div>
 <h4 class="indigo-text" >Pokemons Caught</h4>
@@ -141,7 +48,7 @@
 <table id="myTable" class="display" cellspacing="0" width="100%" >
 <thead>
 <tr>
-<th>#PokemonPartner</th>
+<th>#Partner</th>
 <th>PID</th>
 <th>Name</th>
 <th>Image</th>
@@ -166,28 +73,110 @@ for(int i=0;i<arr.length();i++){
 </tbody>
 </table>
 </div>
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+    <div class="row" >
+    <div class="col s2" ><h5 id="pokename" class="indigo-text" >Name</h5><img id="pokeimg" class="responsive-img" alt="No-img" src="./Pokemons/front/1.png"></div>
+    <div class="col s1"></div>
+    <div class="col s4" >
+      <p id="Partner" >1</p>
+      <p id="PokeID" >465</p>
+      <p id="Level">102</p>
+      <p id="exp">102</p>    
+      <p id="BaseHP">Alvin</p>
+      <p id="BaseAttack">Alvin</p>
+      <p id="BaseSpeed">Alvin</p>
+      <p id="BaseDefence">Alvin</p>
+      <a id="addteam" href="#" class="indigo-text">Add to my team</a>
+    </div>
+    <div id="CurrMoves" class="col s2">
+    <h6  class="indigo-text">Attacks</h6>
+    </div>
+    <div id="AvailableMoves" class="col s3">
+    <h6 class="indigo-text">Available Attacks</h6>
+    </div>
+    </div>
+    </div>
+  </div>
 </div>
 </div>
 </body>
 <script type="text/javascript">
+	function fillTeam(res){
+		var i;
+		for(i=0;i<res.length;i++){
+			var id = "#pokemon"+(i+1);
+			var c1 = $(id).children();
+			$(c1[0]).children("img").attr("src","./Pokemons/front/"+res[i].pid+".png")
+			var c2 = $(c1[1]).children();
+			$(c2[0]).children("strong").text(res[i].name);
+			$(c2[1]).text("#Partner : "+res[i].uid);
+			$(c2[2]).text("Level : "+res[i].level);
+			$(c2[3]).text("HP : "+res[i].currenthp+"/"+res[i].basehp);
+			$(id).css("visibility","visible");
+		} 
+		for(i=res.length;i<6;i++){
+			var id = "#pokemon"+(i+1);
+			$(id).css("visibility","hidden");
+		}
+	}
 	$(document).ready(function(){
+		$('.modal').modal();
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
 			$.post("Profile",{"function":"Get team info"},function(data){
 				var res = JSON.parse(data);
-				var i;
-				for(i=0;i<res.length;i++){
-					var id = "#pokemon"+(i+1);
-					$(id).children(".card-image").html("<img style=\"height:100px;\" src=\"./Pokemons/front/"+res[i].pid+".png\">");
-					$(id).children(".card-content").html( "<h6 class=\"indigo-text\" ><strong>"+res[i].name+"</strong></h6><p>#Partner : "+res[i].uid+"</p><p>Level : "+res[i].level+"</p><p>HP : "+res[i].currenthp+"/"+res[i].basehp+"</p>");
-					$(id).css({"visibility":"visible"});
-				} 
+				fillTeam(res);
 				$("#navbar").css({opacity:"1"});
 				$("#profile_content").animate({opacity:"1"},1000);
 			});
 		});
-		$('#myTable').DataTable({"lengthChange":false});
+		var table = $('#myTable').DataTable({"lengthChange":false});
+		$("#myTable tbody").on('click','tr',function(){
+			var c = table.row(this).data();
+			$.post("Profile",{"function":"Get pokemon stats","uid":c[0]},function(data){
+				var res = JSON.parse(data);
+				$("#Partner").text("#Partner : "+c[0]);
+				$("#PokeID").text("Pokemon ID : "+c[1]);
+				$("#pokename").text(res.Name);
+				$("#Level").text("Level : "+res.Level);
+				$("#exp").text("Exp : "+res.Exp);
+				$("#pokeimg").attr({"src":"./Pokemons/front/"+c[1]+".png"});
+				$("#BaseHP").text("CurrHP : " + res.currHP+"/"+res.MaxHP);
+				$("#BaseAttack").text("Attack : " + res.Attack);
+				$("#BaseSpeed").text("Speed : " + res.Speed);
+				$("#BaseDefence").text("Defence : " + res.Defence);
+				var currMoves = res.CurrentMoves;
+				var availableMoves = res.AvailableMoves;
+				$("#CurrMoves").html("<h6 class=\"indigo-text\">Attacks</h6>");
+				$("#AvailableMoves").html("<h6 class=\"indigo-text\">Available Attacks</h6>");
+				var i;
+				for(i=0;i<currMoves.length;i++){
+					$("#CurrMoves").append("<p>"+currMoves[i].A_ID+" "+currMoves[i].A_Name+"</p>");
+				}
+				for(i=0;i<availableMoves.length;i++){
+					$("#AvailableMoves").append("<p>"+availableMoves[i].A_ID+" "+availableMoves[i].A_Name+"</p>");
+				}
+				$("#modal1").modal("open");
+			});
+		});
+		$("#addteam").click(function(event){
+			event.preventDefault();
+			var c = $("#addteam").siblings("#Partner").text();
+			$.post("Profile",{"function":"Add to my team","uid":c},function(data){
+				var res = JSON.parse(data);
+				fillTeam(res);
+			});
+		});
+		$(".rmteam").click(function(event){
+			event.preventDefault();
+			var c = $(this).siblings("p").first().text();
+			$.post("Profile",{"function":"Remove from my team","uid":c},function(data){
+				var res = JSON.parse(data);
+				fillTeam(res);
+			});
+		});
 	});
 </script>
 </html>

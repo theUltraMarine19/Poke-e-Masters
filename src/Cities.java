@@ -44,11 +44,10 @@ public class Cities extends HttpServlet {
 			}			
 		}
 		String player_id = s.getAttribute("player_id").toString();
-			String player_name = Constants.getPlayerName(player_id);
-			System.out.println(player_name);
-			request.setAttribute("name", player_name);
-			RequestDispatcher view = request.getRequestDispatcher("cities1.jsp");
-			view.forward(request, response);
+		String player_name = Constants.getPlayerName(player_id);
+		request.setAttribute("name", player_name);
+		RequestDispatcher view = request.getRequestDispatcher("cities1.jsp");
+		view.forward(request, response);
 
 	}
 
