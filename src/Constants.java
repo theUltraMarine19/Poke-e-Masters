@@ -528,4 +528,89 @@ public class Constants {
 		}
 		return Constants.getPlayerPokemonTeamInfo(player_id);
 	}
+	
+	public static String addrmKnownMove(String player_id,String uid,String A_ID,boolean addflag){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
+			String pokemonID="";
+			int lvl = 0;
+			PreparedStatement pstmt = conn.prepareStatement("select level,pid from playerpokemon where id=? and uid=?");
+			pstmt.setString(1, player_id);
+			pstmt.setString(2, uid);
+			ResultSet r = pstmt.executeQuery();
+			while(r.next()){
+				lvl = r.getInt(1);
+				pokemonID = r.getString(2);
+			}
+			PreparedStatement check1 = conn.prepareStatement("select count(*) from hasattack where attackid=? and pid=? and levellearnedat <= ?");
+			check1.setString(1, A_ID);
+			check1.setString(2, pokemonID);
+			check1.setInt(3, lvl);
+			ResultSet c1 = check1.executeQuery();
+			JSONObject json = new JSONObject();
+			while(c1.next()){
+				if(c1.getInt(1)==0){
+					json.put("success",false);
+					return json.toString();
+				}
+			}
+			
+			PreparedStatement check2 = conn.prepareStatement("select count(*) from playerpokemonmoves where id=? and uid=?");
+			check2.setString(1, player_id);
+			check2.setString(2, uid);
+			ResultSet c2 = check2.executeQuery();
+			while(c2.next()){
+				if((c2.getInt(1)==4&&addflag)||(c2.getInt(1)==1&&(!addflag))){
+					json.put("success",false);
+					return json.toString();
+				}
+			}
+			
+			if(addflag){
+				PreparedStatement update = conn.prepareStatement("insert into playerpokemonmoves (select ?,?,?,pp from attack where attackid=?)");
+				update.setString(1, player_id);
+				update.setString(2, uid);
+				update.setString(3, A_ID);
+				update.setString(4, A_ID);
+				update.executeUpdate();
+			}
+			else{
+				PreparedStatement update = conn.prepareStatement("delete from playerpokemonmoves where id=? and uid=? and attackid=?");
+				update.setString(1, player_id);
+				update.setString(2,uid);
+				update.setString(3,A_ID);
+				update.executeUpdate();
+			}
+			
+			JSONArray currMoves = new JSONArray();
+			JSONArray availableMoves = new JSONArray();
+			PreparedStatement pstmt1 = conn.prepareStatement("select playerpokemonmoves.attackid,attack.name from attack,playerpokemonmoves where playerpokemonmoves.attackid=attack.attackid and playerpokemonmoves.id=? and playerpokemonmoves.uid=?");
+			pstmt1.setString(1, player_id);
+			pstmt1.setString(2, uid);
+			ResultSet r1 = pstmt1.executeQuery();
+			while(r1.next()){
+				JSONObject temp = new JSONObject();
+				temp.put("A_ID","#"+r1.getString(1));
+				temp.put("A_Name",r1.getString(2));
+				currMoves.put(temp);
+			}
+			json.put("CurrMoves",currMoves);
+			PreparedStatement pstmt2 = conn.prepareStatement("select hasattack.attackid,attack.name from hasattack,attack where hasattack.attackid=attack.attackid and hasattack.pid=? and levellearnedat <= ?");
+			pstmt2.setString(1,pokemonID);
+			pstmt2.setInt(2,lvl);
+			ResultSet r2 = pstmt2.executeQuery();
+			while(r2.next()){
+				JSONObject temp = new JSONObject();
+				temp.put("A_ID","#"+r2.getString(1));
+				temp.put("A_Name",r2.getString(2));
+				availableMoves.put(temp);
+			}
+			json.put("AMoves",availableMoves);
+			json.put("success",true);
+			return json.toString();
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
 }

@@ -114,6 +114,18 @@ public class Profile extends HttpServlet {
 				PrintWriter out = response.getWriter();
 				out.println(newTeam);
 			}
+			else if(function.equals("rm known move")){
+				String A_ID = (request.getParameter("A_ID")).split(" ")[0].substring(1);
+				String ac_moves = Constants.addrmKnownMove(player_id, request.getParameter("uid"), A_ID, false);
+				PrintWriter out = response.getWriter();
+				out.println(ac_moves);
+			}
+			else if(function.equals("add known move")){
+				String A_ID = (request.getParameter("A_ID")).split(" ")[0].substring(1);
+				String ac_moves = Constants.addrmKnownMove(player_id, request.getParameter("uid"), A_ID, true);
+				PrintWriter out = response.getWriter();
+				out.println(ac_moves);
+			}
 		}
 	}
 

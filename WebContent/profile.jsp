@@ -78,7 +78,7 @@ for(int i=0;i<arr.length();i++){
     <div class="row" >
     <div class="col s2" ><h5 id="pokename" class="indigo-text" >Name</h5><img id="pokeimg" class="responsive-img" alt="No-img" src="./Pokemons/front/1.png"></div>
     <div class="col s1"></div>
-    <div class="col s4" >
+    <div class="col s3" >
       <p id="Partner" >1</p>
       <p id="PokeID" >465</p>
       <p id="Level">102</p>
@@ -89,7 +89,7 @@ for(int i=0;i<arr.length();i++){
       <p id="BaseDefence">Alvin</p>
       <a id="addteam" href="#" class="indigo-text">Add to my team</a>
     </div>
-    <div id="CurrMoves" class="col s2">
+    <div id="CurrMoves" class="col s3">
     <h6  class="indigo-text">Attacks</h6>
     </div>
     <div id="AvailableMoves" class="col s3">
@@ -120,6 +120,37 @@ for(int i=0;i<arr.length();i++){
 			$(id).css("visibility","hidden");
 		}
 	}
+	
+	function fillMoves(currMoves,availableMoves,uid){
+		$("#CurrMoves").html("<h6 class=\"indigo-text\">Attacks</h6>");
+		$("#AvailableMoves").html("<h6 class=\"indigo-text\">Available Attacks</h6>");
+		var i;
+		for(i=0;i<currMoves.length;i++){
+			$("#CurrMoves").append("<a class=\"KnownMoves\" href=\"#\" >"+currMoves[i].A_ID+" "+currMoves[i].A_Name+"</a><br>");
+		}
+		for(i=0;i<availableMoves.length;i++){
+			$("#AvailableMoves").append("<a class=\"UnknownMoves\" href=\"#\">"+availableMoves[i].A_ID+" "+availableMoves[i].A_Name+"</a><br>");
+		}
+		$(".KnownMoves").click(function(event){
+			event.preventDefault();		
+			$.post("Profile",{"function":"rm known move","uid":uid,"A_ID":$(this).text()},function(data){
+				var res = JSON.parse(data);
+				if(res.success){
+					fillMoves(res.CurrMoves,res.AMoves,uid);	
+				}
+			});
+		});
+		$(".UnknownMoves").click(function(event){
+			event.preventDefault();
+			$.post("Profile",{"function":"add known move","uid":uid,"A_ID":$(this).text()},function(data){
+				var res = JSON.parse(data);
+				if(res.success){
+					fillMoves(res.CurrMoves,res.AMoves,uid);	
+				}
+			});
+		});
+	}
+	
 	$(document).ready(function(){
 		$('.modal').modal();
 		$("#navbar").load("navbar1.html",function(){
@@ -149,15 +180,7 @@ for(int i=0;i<arr.length();i++){
 				$("#BaseDefence").text("Defence : " + res.Defence);
 				var currMoves = res.CurrentMoves;
 				var availableMoves = res.AvailableMoves;
-				$("#CurrMoves").html("<h6 class=\"indigo-text\">Attacks</h6>");
-				$("#AvailableMoves").html("<h6 class=\"indigo-text\">Available Attacks</h6>");
-				var i;
-				for(i=0;i<currMoves.length;i++){
-					$("#CurrMoves").append("<p>"+currMoves[i].A_ID+" "+currMoves[i].A_Name+"</p>");
-				}
-				for(i=0;i<availableMoves.length;i++){
-					$("#AvailableMoves").append("<p>"+availableMoves[i].A_ID+" "+availableMoves[i].A_Name+"</p>");
-				}
+				fillMoves(currMoves,availableMoves,c[0]);
 				$("#modal1").modal("open");
 			});
 		});
