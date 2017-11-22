@@ -19,30 +19,30 @@ CREATE TABLE Attack
       PRIMARY KEY (AttackID)
 );
 
-CREATE TABLE AritificialPlayer
-(
-      APid VARCHAR(8),
-      APname VARCHAR(15) NOT NULL,
-      PRIMARY KEY (APid)
-);
+-- CREATE TABLE AritificialPlayer
+-- (
+--       APid VARCHAR(8),
+--       APname VARCHAR(15) NOT NULL,
+--       PRIMARY KEY (APid)
+-- );
 
-CREATE TABLE Item
-(
-      ItemID VARCHAR(8),
-      Name VARCHAR(15) NOT NULL,
-      Cost INT DEFAULT 0,
-      EffectNumber INT DEFAULT 0,
-      EffectValue INT DEFAULT 0,
-      PRIMARY KEY (ItemID)
-);
+-- CREATE TABLE Item
+-- (
+--       ItemID VARCHAR(8),
+--       Name VARCHAR(15) NOT NULL,
+--       Cost INT DEFAULT 0,
+--       EffectNumber INT DEFAULT 0,
+--       EffectValue INT DEFAULT 0,
+--       PRIMARY KEY (ItemID)
+-- );
 
-CREATE TABLE PokemonType
-(
-      TypeID VARCHAR(4),
-      Name VARCHAR(10) NOT NULL,
-      Description VARCHAR(100) NOT NULL,
-      PRIMARY KEY (TypeID)
-);
+-- CREATE TABLE PokemonType
+-- (
+--       TypeID VARCHAR(4),
+--       Name VARCHAR(10) NOT NULL,
+--       Description VARCHAR(100) NOT NULL,
+--       PRIMARY KEY (TypeID)
+-- );
 
 CREATE TABLE Player
 (
@@ -61,57 +61,57 @@ CREATE TABLE Player
       PRIMARY KEY (ID)
 );
 
-CREATE TABLE Gym
-(
-      GymID VARCHAR(4),
-      BadgeName VARCHAR(15) NOT NULL,
-      LocationX NUMERIC(2,0) DEFAULT 50,
-      LocationY NUMERIC(2,0) DEFAULT 50,
-      CityID VARCHAR(4),
-      PRIMARY KEY (GymID),
-      FOREIGN KEY (CityID) REFERENCES City(CityID) ON DELETE CASCADE
-);
+-- CREATE TABLE Gym
+-- (
+--       GymID VARCHAR(4),
+--       BadgeName VARCHAR(15) NOT NULL,
+--       LocationX NUMERIC(2,0) DEFAULT 50,
+--       LocationY NUMERIC(2,0) DEFAULT 50,
+--       CityID VARCHAR(4),
+--       PRIMARY KEY (GymID),
+--       FOREIGN KEY (CityID) REFERENCES City(CityID) ON DELETE CASCADE
+-- );
 
-CREATE TABLE HasItem
-(
-      Count INT DEFAULT 0,
-      ID VARCHAR(8),
-      ItemID VARCHAR(8),
-      PRIMARY KEY (ID, ItemID),
-      FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
-      FOREIGN KEY (ItemID) REFERENCES Item(ItemID) ON DELETE CASCADE
-);
+-- CREATE TABLE HasItem
+-- (
+--       Count INT DEFAULT 0,
+--       ID VARCHAR(8),
+--       ItemID VARCHAR(8),
+--       PRIMARY KEY (ID, ItemID),
+--       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+--       FOREIGN KEY (ItemID) REFERENCES Item(ItemID) ON DELETE CASCADE
+-- );
 
-CREATE TABLE HasWonBadge
-(
-      ID VARCHAR(8),
-      GymID VARCHAR(4),
-      PRIMARY KEY (ID, GymID),
-      FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
-      FOREIGN KEY (GymID) REFERENCES Gym(GymID) ON DELETE CASCADE
-);
+-- CREATE TABLE HasWonBadge
+-- (
+--       ID VARCHAR(8),
+--       GymID VARCHAR(4),
+--       PRIMARY KEY (ID, GymID),
+--       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+--       FOREIGN KEY (GymID) REFERENCES Gym(GymID) ON DELETE CASCADE
+-- );
 
-CREATE TABLE GymBattleHist
-(
-      Result VARCHAR(4) NOT NULL,
-      BattleTime TIMESTAMP NOT NULL,
-      BattleID VARCHAR(15),
-      APid VARCHAR(8),
-      ID VARCHAR(8),
-      PRIMARY KEY (BattleID),
-      FOREIGN KEY (APid) REFERENCES AritificialPlayer(APid) ON DELETE CASCADE,
-      FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE
-);
+-- CREATE TABLE GymBattleHist
+-- (
+--       Result VARCHAR(4) NOT NULL,
+--       BattleTime TIMESTAMP NOT NULL,
+--       BattleID VARCHAR(15),
+--       APid VARCHAR(8),
+--       ID VARCHAR(8),
+--       PRIMARY KEY (BattleID),
+--       FOREIGN KEY (APid) REFERENCES AritificialPlayer(APid) ON DELETE CASCADE,
+--       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE
+-- );
 
-CREATE TABLE TypeEffect
-(
-      MultFactor NUMERIC(4,2) DEFAULT 0.00,
-      AttackerTypeID VARCHAR(4),
-      ReceiverTypeID VARCHAR(4),
-      PRIMARY KEY (AttackerTypeID, ReceiverTypeID),
-      FOREIGN KEY (AttackerTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE,
-      FOREIGN KEY (ReceiverTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE
-);
+-- CREATE TABLE TypeEffect
+-- (
+--       MultFactor NUMERIC(4,2) DEFAULT 0.00,
+--       AttackerTypeID VARCHAR(4),
+--       ReceiverTypeID VARCHAR(4),
+--       PRIMARY KEY (AttackerTypeID, ReceiverTypeID),
+--       FOREIGN KEY (AttackerTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE,
+--       FOREIGN KEY (ReceiverTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE
+-- );
 
 CREATE TABLE Pokemon
 (
@@ -161,34 +161,47 @@ CREATE TABLE HasAttack
 CREATE TABLE WildPokemon
 (
       PID VARCHAR(4),
-      CityID VARCHAR(4),
-      PRIMARY KEY (PID, CityID),
-      FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE,
-      FOREIGN KEY (CityID) REFERENCES City(CityID) ON DELETE CASCADE
+      WildID VARCHAR(4),
+      Level INT NOT NULL,
+      CurrentHP INT NOT NULL,
+      IV INT DEFAULT 0,
+      EV INT DEFAULT 50,  
+      PRIMARY KEY(WildID),    
+      FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE     
 );
 
-CREATE TABLE APPokemon
+CREATE TABLE WildPokemonMoves
 (
-      Level INT NOT NULL,
-      PID VARCHAR(4),
-      APid VARCHAR(8),
-      PRIMARY KEY (PID, APid),
-      FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE,
-      FOREIGN KEY (APid) REFERENCES AritificialPlayer(APid) ON DELETE CASCADE
+      WildID VARCHAR(4),
+      AttackID VARCHAR(4),
+      PP INT,
+      PRIMARY KEY(WildID,AttackID),
+      FOREIGN KEY(WildID) REFERENCES WildPokemon(WildID) ON DELETE CASCADE,
+      FOREIGN KEY(AttackID) REFERENCES Attack(AttackID) ON DELETE CASCADE
 );
 
-CREATE TABLE WildBattleHist
-(
-      Result VARCHAR(4) NOT NULL,
-      Level INT NOT NULL,
-      BattleTime TIMESTAMP NOT NULL,
-      BattleID VARCHAR(20),
-      ID VARCHAR(8),
-      PID VARCHAR(4),
-      PRIMARY KEY (BattleID),
-      FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
-      FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
-);
+-- CREATE TABLE APPokemon
+-- (
+--       Level INT NOT NULL,
+--       PID VARCHAR(4),
+--       APid VARCHAR(8),
+--       PRIMARY KEY (PID, APid),
+--       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE,
+--       FOREIGN KEY (APid) REFERENCES AritificialPlayer(APid) ON DELETE CASCADE
+-- );
+
+-- CREATE TABLE WildBattleHist
+-- (
+--       Result VARCHAR(4) NOT NULL,
+--       Level INT NOT NULL,
+--       BattleTime TIMESTAMP NOT NULL,
+--       BattleID VARCHAR(20),
+--       ID VARCHAR(8),
+--       PID VARCHAR(4),
+--       PRIMARY KEY (BattleID),
+--       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+--       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
+-- );
 
 CREATE TABLE PlayerPokemonMoves
 (
@@ -209,7 +222,7 @@ CREATE SEQUENCE GymBattleHistID START 1;
 
 CREATE SEQUENCE UserPokemonID START 1;
 
--- CREATE SEQUENCE PokemonID START 1;
+CREATE SEQUENCE WildPokemonID START 1;
 
 CREATE SEQUENCE CityID START 1;
 

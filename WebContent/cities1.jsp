@@ -5,7 +5,8 @@
 <%@page import="java.io.FileReader"%>
 <%@page import="java.io.BufferedReader"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"
+    import="org.json.*"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,6 +15,26 @@
  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script type="text/javascript" src="./javascript/jquery-3.2.1.min.js"></script>
   <script src="./materialize/js/materialize.min.js"></script>
+  <style type="text/css">
+#battleground {
+	position: relative;
+    background-image: url('./battle.png');
+    width: 400px;
+    height: 238px;
+}
+#img3 {
+    position: absolute;
+    left: 50px;
+    top: 150px;
+}
+#img4 {
+    position: absolute;
+    left: 250px;
+    top: 70px;
+}
+.center {text-align: center;}
+.tmid {margin: 0px auto;}
+</style>
 <title>Cities</title>
 </head>
 
@@ -96,9 +117,21 @@
 		    	var wildId = (Math.floor(Math.random() * 200) + 1)*3;
 		    	$("#panel").show();
 				$("#panelImg").append("<img src=\"./Pokemons/front/"+wildId+".png\" id=\"imgWild\">\n");
-		    	$("#panelContent").append("<p>Wild Pokemon appeared!!!<\p><br>");
-		    	$("#panelContent").append("<form action=\"Battle\" method=\"post\"><input type=\"hidden\" name=\"wildId\" value=\""+wildId+"\"><input type=\"submit\" value=\"Battle\"></form>");
-
+		    	$("#panelContent").append("<p>Wild Pokemon appeared!!!<\p><p>Level : 10</p><br>");
+		    	$("#panelContent").append("<form id=\"BattleForm\"><input type=\"hidden\" name=\"wildId\" value=\""+wildId+"\"><imput type=\"hidden\" name=\"wildLvl\" value=\"10\"><input type=\"submit\" value=\"Battle\"></form>");
+				$("#BattleForm").submit(function(){
+					var details = $(this).serialize();
+					var wildPoke = $(this).children("input");
+					$("#img4").attr({"src":"./Pokemons/front/"+$(wildPoke[0]).val()+".png","alt":"No Image"});
+				    $.post("Battle",{"type":"wild","state":"begin","WildPID":$(wildPoke[0]).val(),"Level":"10"},function(data){
+						var res = JSON.parse(data);
+				    	$("#oppimage").attr("src","./Pokemons/front/"+$(wildPoke[0]).val()+".png");
+				    	$("#oppinfo").html("<h6 class=\"indigo-text\"><strong>"+res.name+"</strong></h6><p>#wildID : "+res.wildID+"</p><p>Level : "+res.Level+"</p><p>HP : "+res.currHP+"/"+res.currHP+"</p>");
+						$("#modal1").modal("open");
+					});	 	 	
+					$("#modal1").modal("open");
+					return false;
+				});
 		    }
 
 		    if (dummy == 1)
@@ -139,7 +172,7 @@
 <div class="row" >
 <div class="col s6" ></div>
 <div class="col s2" >
-	<div class="card hoverable" style="display:none;margin-top: 70px;" id="panel">
+	<div class="card" style="display:none;margin-top: 70px;" id="panel">
         <div class="card-image" id="panelImg">
         </div>
         <div class="card-content" id="panelContent">
@@ -148,16 +181,64 @@
 </div>
 </div>
 </div>
-
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+    <div class="row">
+    <div class="col s2 offset-s5" >
+    <h5 class="indigo-text" ><strong>Battle</strong></h5>
+    </div>
+    </div>
+	<div class="row" >
+	<div class="col s4" >
+	<%
+		JSONArray player_team = new JSONArray((String)request.getAttribute("player_team"));
+		for(int i=0;i<player_team.length();i++){
+			JSONObject temp = player_team.getJSONObject(i);
+			String id = "pokemon"+(i+1);
+			out.println("<div class=\"row\"><div class=\"col s10\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p>#Partner : "+temp.getString("uid")+"</p><p>Level : "+temp.getInt("level")+"</p><p>HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p display=\"none\">"+temp.getString("pid")+"</p></div></div></div></div></div>");
+		}
+	%>
+	</div>
+	<div class="col s5"></div>
+	<div class="col s3">
+	<div class="card">
+	<div class="card-image">
+	<img style="height:100px;" alt="No Image" id="oppimage" src="./Pokemons/front/1.png">
+	</div>
+	<div id="oppinfo" class="card-content">
+	<h6 class="indigo-text"><strong>wildid</strong></h6>
+	<p>wildid</p>
+	<p>wildid</p>
+	</div>
+	</div>
+	</div>
+	</div>
+    </div>
+  </div>
 </body>
 <script type="text/javascript">
 
 	$(document).ready(function(){
+		$("#modal1").modal({complete:function(){
+			numSteps=0;
+		    $("#panel").hide();
+		    $("#panelImg").html("");
+		    $("#panelContent").html("");
+		}});
 		$("#navbar").load("navbar1.html",function(){
 			$("#name_user").text($("#userName").text());
 			$('#cities').addClass('active');
 			$(".dropdown-button").dropdown();
 		});
+		var i;
+		for(i=0;i<6;i++){
+			var id = "#pokemon"+(i+1);
+			$(id).click(function(){
+				var c = $(this).children(".card-content").first().children("p");
+				$("#img3").attr({"src":"./Pokemons/front/"+$(c[3]).text()+".png","alt":"No Image"});
+				$("#img3").css({"visibility":"visible"});
+			});
+		}
 	});
 </script>
 </html>

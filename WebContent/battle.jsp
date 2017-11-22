@@ -41,7 +41,8 @@
     left: 250px;
     top: 70px;
 }
-
+.center {text-align: center;}
+.tmid {margin: 0px auto;}
 </style>
 <body>
 
@@ -50,96 +51,11 @@
 <div>
 	<div id="cont">
 		<img src="./Pokemons/back/1.png" id="img1">
-		<%
-		int wildId = Integer.parseInt(request.getParameter("wildId"));
-		out.println("<center><img src=\"./Pokemons/front/"+wildId+".png\" id=\"img2\"></center>");
-		%>
+		<div class="center tmid" ><img src="./Pokemons/front/6.png" id="img2"></div>
 	</div>
 	<div style="float: left;">
 		<p id="p1"></p>
 	</div>
-</div>
-<div class="container" >
-<div class="row" ></div>
-<div class="row" >
-<div class="col s2" >
-	<div class="card hoverable" style="margin-top: 70px;" id="panel1">
-        <div class="card-image" id="panelImg">
-        <img style="height:100px;" src="./Pokemons/front/1.png">
-        </div>
-        <div class="card-content" id="panelContent">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-           <p>Level:100</p>
-           <p>HP:360/360</p>
- 
-        </div>
-	</div>
-</div>
-<div class="col s2" >
-	<div class="card hoverable" style="margin-top: 70px;" id="panel2">
-        <div class="card-image" id="panelImg">
-        <img style="height:100px;" src="./Pokemons/front/4.png">
-        </div>
-        <div class="card-content" id="panelContent">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-           <p>Level:100</p>
-           <p>HP:360/360</p>
-
-        </div>
-	</div>
-</div>
-<div class="col s2" >
-	<div class="card hoverable" style="margin-top: 70px;" id="panel3">
-        <div class="card-image" id="panelImg">
-        <img style="height:100px;" src="./Pokemons/front/7.png">
-        </div>
-        <div class="card-content" id="panelContent">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-           <p>Level:100</p>
-           <p>HP:360/360</p>
-
-        </div>
-	</div>
-</div>
-<div class="col s2" >
-	<div class="card hoverable" style="margin-top: 70px;" id="panel4">
-        <div class="card-image" id="panelImg">
-        <img style="height:100px;" src="./Pokemons/front/10.png">
-        </div>
-        <div class="card-content" id="panelContent">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-           <p>Level:100</p>
-           <p>HP:360/360</p>
-
-        </div>
-	</div>
-</div>
-<div class="col s2" >
-	<div class="card hoverable" style="margin-top: 70px;" id="panel5">
-        <div class="card-image" id="panelImg">
-        <img style="height:100px;" src="./Pokemons/front/13.png">
-        </div>
-        <div class="card-content" id="panelContent">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-           <p>Level:100</p>
-           <p>HP:360/360</p>
-
-        </div>
-	</div>
-</div>
-<div class="col s2" >
-	<div class="card hoverable" style="margin-top: 70px;" id="panel6">
-        <div class="card-image" id="panelImg">
-        <img style="height:100px;" src="./Pokemons/front/16.png">
-        </div>
-        <div class="card-content" id="panelContent">
-        <h6 class="indigo-text" ><strong>Charizard</strong></h6>
-           <p>Level:100</p>
-           <p>HP:360/360</p>
-        </div>
-	</div>
-</div>
-</div>
 </div>
 </body>
 </html>

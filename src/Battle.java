@@ -1,8 +1,8 @@
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +30,14 @@ public class Battle extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		HttpSession s = request.getSession(false);
 		if(s==null) {			
 			response.sendRedirect("Login");
@@ -42,19 +50,20 @@ public class Battle extends HttpServlet {
 				return;
 			}			
 		}
-			String player_id = s.getAttribute("player_id").toString();
-			String player_name = Constants.getPlayerName(player_id);
-			request.setAttribute("name", player_name);
-			RequestDispatcher view = request.getRequestDispatcher("battle.jsp");
-			view.forward(request, response);
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+//		String player_id = s.getAttribute("player_id").toString();
+		if((request.getMethod()).equals("POST")){			
+			String battleType = request.getParameter("type");				
+			if(battleType.equals("wild")){
+				String state = request.getParameter("state");
+				if(state.equals("begin")){
+					String wildPID = request.getParameter("WildPID");
+					int level = Integer.parseInt(request.getParameter("Level"));
+					String res = Constants.WildBattleBegin(wildPID, level);
+					PrintWriter out = response.getWriter();
+					out.println(res);
+				}				
+			}
+		}
 	}
 
 }

@@ -48,7 +48,7 @@ public class Constants {
         
 		try{
 			MimeMessage m = new MimeMessage(session);
-			m.setFrom(new InternetAddress("noreplay@pokEMasters.com"));
+			m.setFrom(new InternetAddress("noreply@pokEMasters.com"));
 			m.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
 			m.setSubject(subject);
 			m.setText(body);
@@ -476,13 +476,13 @@ public class Constants {
 				json.put("Exp",exp);
 				json.put("Name",name);
 				json.put("currHP",currHP);				
-				double x = Math.floor(((bHP+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
+				int x = calculateStat(lvl,bHP,ev,iv,true);
 				json.put("MaxHP",x);
-				x = Math.floor(((battack+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+				x = calculateStat(lvl,battack,ev,iv,false);
 				json.put("Attack",x);
-				x = Math.floor(((bspeed+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+				x = calculateStat(lvl,bspeed,ev,iv,false);
 				json.put("Speed",x);
-				x = Math.floor(((bdef+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+				x = calculateStat(lvl,bdef,ev,iv,false);
 				json.put("Defence",x);
 			}
 			return json.toString();
@@ -612,5 +612,55 @@ public class Constants {
 			System.out.println("Error : "+e);
 		}
 		return null;
+	}
+	
+	public static String WildBattleBegin(String wildPID,int level){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
+			PreparedStatement p1 = conn.prepareStatement("select nextval('wildpokemonid')");
+			ResultSet r1 = p1.executeQuery();
+			String wildID = "";
+			while(r1.next()){
+				wildID = Integer.toString(r1.getInt(1));
+			}
+			PreparedStatement pstmt = conn.prepareStatement("insert into wildpokemon values(?,?,?,?)");
+			pstmt.setString(1, wildPID);
+			pstmt.setString(2, wildID);
+			pstmt.setInt(3, level);			
+			PreparedStatement pstmt1 = conn.prepareStatement("select name,basehp from pokemon where pid=?");
+			pstmt1.setString(1, wildPID);
+			ResultSet r = pstmt1.executeQuery();
+			JSONObject wildInfo = new JSONObject();
+			wildInfo.put("wildID",wildID);
+			wildInfo.put("Level",level);
+			int currhp=0;
+			while(r.next()){
+				wildInfo.put("name",r.getString(1));
+				currhp = calculateStat(level,r.getInt(2),50,0,true);
+				wildInfo.put("currHP",currhp);
+			}
+			pstmt.setInt(4, currhp);
+			pstmt.executeUpdate();
+			PreparedStatement pstmt2 = conn.prepareStatement("insert into wildpokemonmoves (select ?,hasattack.attackid,pp from attack,hasattack where hasattack.pid=? and attack.attackid=hasattack.attackid and levellearnedat<? limit 4)");
+			pstmt2.setString(1,wildID);
+			pstmt2.setString(2,wildPID);
+			pstmt2.setInt(3,level);
+			pstmt2.executeUpdate();
+			return wildInfo.toString();
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	private static int calculateStat(int lvl,int basestat,int ev,int iv,boolean hpflag){
+		int stat = 0;
+		if(hpflag){
+			stat = (int)Math.floor(((basestat+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
+		}
+		else{
+			stat = (int)Math.floor(((basestat+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+5;
+		}
+		return stat;
 	}
 }

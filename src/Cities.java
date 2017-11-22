@@ -45,7 +45,9 @@ public class Cities extends HttpServlet {
 		}
 		String player_id = s.getAttribute("player_id").toString();
 		String player_name = Constants.getPlayerName(player_id);
+		String player_team = Constants.getPlayerPokemonTeamInfo(player_id);
 		request.setAttribute("name", player_name);
+		request.setAttribute("player_team",player_team);
 		RequestDispatcher view = request.getRequestDispatcher("cities1.jsp");
 		view.forward(request, response);
 
