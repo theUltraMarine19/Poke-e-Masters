@@ -669,4 +669,115 @@ public class Constants {
 		}
 		return stat;
 	}
+	
+	private static JSONObject wildAttack(String player_id,String uid,String attackId,String wildId){
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement userPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name from PlayerPokemon as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
+			PreparedStatement userMoveData = conn.prepareStatement("select a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,PP from PlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=? and ppm.AttackID=?");
+			PreparedStatement wildMoveData = conn.prepareStatement("select wpm.AttackId, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type, wpm.PP from WildPokemonMoves as wpm, Attack as a where wpm.AttackID=a.AttackID and wpm.WildID=?");
+			PreparedStatement wildPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name from WildPokemon as wp, Pokemon as p where wp.PID=p.PID and wp.WildID=?");){
+			userPokeData.setString(1, player_id);
+			userPokeData.setString(2, uid);
+			userMoveData.setString(1, uid);
+			userMoveData.setString(2, attackId);
+			wildMoveData.setString(1, wildId);
+			userPokeData.setString(1, wildId);
+			ResultSet r1 = userPokeData.executeQuery();
+			ResultSet r2 = userMoveData.executeQuery();
+			ResultSet r3 = wildPokeData.executeQuery();
+			ResultSet r4 = wildMoveData.executeQuery();
+			r2.next();
+			if(r2.getInt(5)>0) {
+				json.put("status", true);
+				int temp=0;
+				while(temp!=0) {
+					r4 = wildMoveData.executeQuery();
+					int rand = ThreadLocalRandom.current().nextInt(0, 4);
+					for(int i=0;i<=rand;i++)
+						r4.next();
+					temp=r4.getInt(6);
+				}
+				PreparedStatement UserPokeUpdate = conn.prepareStatement("Update PlayerPokemon set CurrentHP=? where ID=? and UID=?");
+				PreparedStatement WildPokeUpdate = conn.prepareStatement("Update WildPokemon set CurrentHP=? where WildID=?");
+				PreparedStatement UserPokeMoveUpdate = conn.prepareStatement("Update PlayerPokemonMoves set PP=? where ID=? and UID=? and AttackID=?");
+				PreparedStatement WildPokeMoveUpdate = conn.prepareStatement("Update WildPokemonMoves set PP=? where WildID=? and AttackID=?");
+				int Level1 = r1.getInt(1);
+				int Level2 = r3.getInt(1);
+				int TotalHp1 = calculateStat(Level1,r1.getInt(2),r1.getInt(9),r1.getInt(8),true);
+				int TotalHp2 = calculateStat(Level2,r3.getInt(2),r3.getInt(9),r3.getInt(8),true);
+				int Attack1 = calculateStat(Level1,r1.getInt(4),r1.getInt(9),r1.getInt(8),false);
+				int Attack2 = calculateStat(Level2,r3.getInt(4),r3.getInt(9),r3.getInt(8),false);
+				int Defense1 = calculateStat(Level1,r1.getInt(5),r1.getInt(9),r1.getInt(8),false);
+				int Defense2 = calculateStat(Level2,r3.getInt(5),r3.getInt(9),r3.getInt(8),false);
+				int Speed1 = calculateStat(Level1,r1.getInt(6),r1.getInt(9),r1.getInt(8),false);
+				int Speed2 = calculateStat(Level2,r3.getInt(6),r3.getInt(9),r3.getInt(8),false);
+				int UserDoneDamage =(int) (((((2*Level1/5.0)+2)*r2.getInt(2)*(Attack1/Defense2)/50)+2)*(ThreadLocalRandom.current().nextInt(0, 1000)/1000.0));
+				int WildDoneDamage =(int) (((((2*Level2/5.0)+2)*r4.getInt(2)*(Attack2/Defense1)/50)+2)*(ThreadLocalRandom.current().nextInt(0, 1000)/1000.0));
+				//Add STAB effect and Type effect after type effect table is populated
+				if(r2.getInt(2)==0) {
+					UserDoneDamage=0;
+				}
+				int CurrHp2=Math.max(0, r3.getInt(3)-UserDoneDamage);
+				int CurrHp1=Math.max(0, r1.getInt(3)-WildDoneDamage);
+				
+				UserPokeUpdate.setInt(1,CurrHp1);
+				UserPokeUpdate.setString(2, player_id);
+				UserPokeUpdate.setString(3, uid);
+				WildPokeUpdate.setInt(1, CurrHp2);
+				WildPokeUpdate.setString(2, wildId);
+				UserPokeMoveUpdate.setInt(1,r2.getInt(5));
+				UserPokeMoveUpdate.setString(2,player_id);
+				UserPokeMoveUpdate.setString(3,uid);
+				UserPokeMoveUpdate.setString(4,attackId);
+				WildPokeMoveUpdate.setInt(1,r4.getInt(6));
+				WildPokeMoveUpdate.setString(2,wildId);
+				WildPokeMoveUpdate.setString(3,r4.getString(1));
+				String Message = "";
+				try {
+					conn.setAutoCommit(false);
+					if(CurrHp2!=0 || (CurrHp2==0 && Speed2>Speed1)) {
+						UserPokeUpdate.executeUpdate();
+						WildPokeMoveUpdate.executeUpdate();
+						json.put("WildDoneDamage", WildDoneDamage);
+						Message = Message + "Enemy "+r3.getString(10)+ " used "+r4.getString(2)+ " and caused "+Integer.toString(WildDoneDamage)+"HP damage.";
+						
+					}
+					else {
+						json.put("WildDoneDamage", 0);
+					}
+					if(CurrHp1!=0 || (CurrHp1==0 && Speed1>Speed2)) {
+						WildPokeUpdate.executeUpdate();
+						UserPokeMoveUpdate.executeUpdate();
+						json.put("UserDoneDamage", UserDoneDamage);
+						Message = Message + "Your "+r1.getString(10)+ " used "+r2.getString(1)+ " and caused "+Integer.toString(UserDoneDamage)+"HP damage.";
+					}
+					else {
+						json.put("WildDoneDamage", 0);
+					}
+					conn.commit();
+					conn.setAutoCommit(true);
+					json.put("UserCurrHP", CurrHp1);
+					json.put("WildCurrHP", CurrHp2);
+					json.put("UserHp", TotalHp1);
+					json.put("WildHp", TotalHp2);
+					json.put("message", Message);
+				}
+				catch(Exception e) {
+					System.out.println("Error : "+e);
+					conn.rollback();
+					return null;
+				}
+			}
+			else {
+				json.put("status", false);
+				json.put("Message", "Insufficient Power Points");
+			}
+			return json;
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
 }
