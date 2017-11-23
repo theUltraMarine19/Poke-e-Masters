@@ -87,6 +87,7 @@ for(int i=0;i<arr.length();i++){
       <p id="BaseAttack">Alvin</p>
       <p id="BaseSpeed">Alvin</p>
       <p id="BaseDefence">Alvin</p>
+      <a id="evolve" style="display:none;" href="#">Evolve !</a>
       <a id="addteam" href="#" class="indigo-text">Add to my team</a>
     </div>
     <div id="CurrMoves" class="col s3">
@@ -152,7 +153,9 @@ for(int i=0;i<arr.length();i++){
 	}
 	
 	$(document).ready(function(){
-		$('.modal').modal();
+		$('.modal').modal({complete:function(){
+			$("#evolve").css("display","none");
+		}});
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
@@ -181,6 +184,9 @@ for(int i=0;i<arr.length();i++){
 				var currMoves = res.CurrentMoves;
 				var availableMoves = res.AvailableMoves;
 				fillMoves(currMoves,availableMoves,c[0]);
+				if(res.EvolveAvailable){
+					$("#evolve").css("display","block");
+				}
 				$("#modal1").modal("open");
 			});
 		});
@@ -190,6 +196,15 @@ for(int i=0;i<arr.length();i++){
 			$.post("Profile",{"function":"Add to my team","uid":c},function(data){
 				var res = JSON.parse(data);
 				fillTeam(res);
+			});
+		});
+		$("#evolve").click(function(){
+			event.preventDefault();			
+			$.post("Profile",{"function":"Evolve pokemon","uid":$("#Partner").text()},function(data){
+				var res = JSON.parse(data);
+				if(res.success){
+					location.reload();	
+				}				
 			});
 		});
 		$(".rmteam").click(function(event){

@@ -128,8 +128,6 @@ CREATE TABLE Pokemon
       EvolveIntoID VARCHAR(4),
       EvolveTrigger VARCHAR(20),
       PRIMARY KEY (PID)
-      -- FOREIGN KEY (EvolveIntoID) REFERENCES Pokemon(PID) ON DELETE SET NULL,
-      -- FOREIGN KEY (TypeID) REFERENCES PokemonType(TypeID) ON DELETE SET DEFAULT
 );
 
 CREATE TABLE PlayerPokemon

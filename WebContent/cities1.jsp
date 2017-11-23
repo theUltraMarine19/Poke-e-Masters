@@ -188,6 +188,8 @@
     <h5 class="indigo-text" ><strong>Battle</strong></h5>
     </div>
     </div>
+    <div id="pokemoves" class="row">	
+	</div>
 	<div class="row" >
 	<div class="col s4" >
 	<%
@@ -195,11 +197,12 @@
 		for(int i=0;i<player_team.length();i++){
 			JSONObject temp = player_team.getJSONObject(i);
 			String id = "pokemon"+(i+1);
-			out.println("<div class=\"row\"><div class=\"col s10\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p>#Partner : "+temp.getString("uid")+"</p><p>Level : "+temp.getInt("level")+"</p><p>HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p display=\"none\">"+temp.getString("pid")+"</p></div></div></div></div></div>");
+			out.println("<div class=\"row\"><div class=\"col s10\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p>#Partner : "+temp.getString("uid")+"</p><p>Level : "+temp.getInt("level")+"</p><p>HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p style=\"display:none;\">"+temp.getString("pid")+"</p></div></div></div></div></div>");
 		}
 	%>
 	</div>
-	<div class="col s5"></div>
+	<div class="col s5">
+	</div>
 	<div class="col s3">
 	<div class="card">
 	<div class="card-image">
@@ -224,6 +227,7 @@
 		    $("#panel").hide();
 		    $("#panelImg").html("");
 		    $("#panelContent").html("");
+		    $("#pokemoves").html("");
 		}});
 		$("#navbar").load("navbar1.html",function(){
 			$("#name_user").text($("#userName").text());
@@ -235,8 +239,18 @@
 			var id = "#pokemon"+(i+1);
 			$(id).click(function(){
 				var c = $(this).children(".card-content").first().children("p");
-				$("#img3").attr({"src":"./Pokemons/front/"+$(c[3]).text()+".png","alt":"No Image"});
-				$("#img3").css({"visibility":"visible"});
+				$.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()},function(data){
+					var res = JSON.parse(data);
+					$("#pokemoves").html("<div class=\"col s2\" ></div>");
+					var i;
+					for(i=0;i<res.length;i++){
+						var a_id = "attack"+(i+1);
+						$("#pokemoves").append("<div class=\"col s2\"><div class=\"card hoverable\"><div id=\""+a_id+"\" class=\"card-content\"><p style=\"font-size:10px;\">#"+res[i].AttackID+" "+res[i].Name+"</p><p style=\"font-size:10px;\">PP : "+res[i].PP+"</p></div></div></div>");
+						$("#"+a_id).click(function(){
+							
+						});
+					}
+				});
 			});
 		}
 	});
