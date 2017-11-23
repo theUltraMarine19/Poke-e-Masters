@@ -46,11 +46,18 @@ $(document).ready(function(){
 	$('#login_form').submit(function(){
 		var details = $('#login_form').serialize();
 		var success;
+		var admin;
 		$.post('Login',details,function(data){
 			var obj = JSON.parse(data);
 			success = obj.success;
 			if(success){
-				window.location.replace("Home");
+				admin = obj.admin;
+				if (admin)
+				{
+					window.location.replace("Admin");
+				}
+				else
+					window.location.replace("Home");
 			}
 			else{
 				alert(obj.status);	

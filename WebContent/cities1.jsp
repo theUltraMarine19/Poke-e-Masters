@@ -238,6 +238,7 @@
 		for(i=0;i<6;i++){
 			var id = "#pokemon"+(i+1);
 			$(id).click(function(){
+				alert("selected pokemon");
 				var c = $(this).children(".card-content").first().children("p");
 				$.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()},function(data){
 					var res = JSON.parse(data);
