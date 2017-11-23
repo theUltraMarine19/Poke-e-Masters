@@ -51,7 +51,8 @@
 <div>
 	<div id="cont">
 		<img src="./Pokemons/back/1.png" id="img1">
-		<div class="center tmid" ><img src="./Pokemons/front/6.png" id="img2"></div>
+		<div class="center tmid" >
+			<img src="./Pokemons/front/6.png" id="img2"></div>
 	</div>
 	<div style="float: left;">
 		<p id="p1"></p>

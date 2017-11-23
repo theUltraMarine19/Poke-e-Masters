@@ -188,6 +188,8 @@
     <h5 class="indigo-text" ><strong>Battle</strong></h5>
     </div>
     </div>
+    <div id="pokemoves" class="row">	
+	</div>
 	<div class="row" >
 	<div class="col s4" >
 	<%
@@ -195,11 +197,12 @@
 		for(int i=0;i<player_team.length();i++){
 			JSONObject temp = player_team.getJSONObject(i);
 			String id = "pokemon"+(i+1);
-			out.println("<div class=\"row\"><div class=\"col s10\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p>#Partner : "+temp.getString("uid")+"</p><p>Level : "+temp.getInt("level")+"</p><p>HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p display=\"none\">"+temp.getString("pid")+"</p></div></div></div></div></div>");
+			out.println("<div class=\"row\"><div class=\"col s10\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p>#Partner : "+temp.getString("uid")+"</p><p>Level : "+temp.getInt("level")+"</p><p>HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p style=\"display:none;\">"+temp.getString("pid")+"</p></div></div></div></div></div>");
 		}
 	%>
 	</div>
-	<div class="col s5"></div>
+	<div class="col s5">
+	</div>
 	<div class="col s3">
 	<div class="card">
 	<div class="card-image">
@@ -224,21 +227,79 @@
 		    $("#panel").hide();
 		    $("#panelImg").html("");
 		    $("#panelContent").html("");
+		    $("#pokemoves").html("");
 		}});
 		$("#navbar").load("navbar1.html",function(){
 			$("#name_user").text($("#userName").text());
 			$('#cities').addClass('active');
 			$(".dropdown-button").dropdown();
 		});
-		var i;
-		for(i=0;i<6;i++){
-			var id = "#pokemon"+(i+1);
-			$(id).click(function(){
-				var c = $(this).children(".card-content").first().children("p");
-				$("#img3").attr({"src":"./Pokemons/front/"+$(c[3]).text()+".png","alt":"No Image"});
-				$("#img3").css({"visibility":"visible"});
-			});
-		}
+		$.post("Profile",{"function":"Get team info"},function(data){
+			var res1 = JSON.parse(data);
+			var i2
+			for(i2=0;i2<res1.length;i2++){
+				if(res1[i2].currenthp != 0){
+					var id = "#pokemon"+(i2+1);
+					$(id).click(function(){	
+						var poke = $(this);
+						var c = $(this).children(".card-content").first().children("p");
+						$.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()},function(data){					
+							var res = JSON.parse(data);
+							$("#pokemoves").html("<div class=\"col s2\" ></div>");
+							var i1;
+							for(i1=0;i1<res.length;i1++){
+								var a_id = "attack"+(i1+1);
+								$("#pokemoves").append("<div class=\"col s2\"><div class=\"card hoverable\"><div id=\""+a_id+"\" class=\"card-content\"><p style=\"font-size:10px;\">#"+res[i1].AttackID+" "+res[i1].Name+"</p><p style=\"font-size:10px;\">PP : "+res[i1].PP+"</p><p style=\"display:none\">"+res[i1].uid+"</p></div></div></div>");
+								$("#"+a_id).click(function(){
+									var pokeAttack = $(this);
+									var a_info = $(this).children("p");
+									var attackId = ($(a_info[0]).text()).split(" ")[0];
+									var uId = ($(a_info[2]).text());
+									var wildId = $("#oppinfo").children("p").first().text().split(" ")[2];
+									var pp = ($(a_info[1]).text()).split(" ")[2];
+									if(pp == "0"){
+										$(this).off("click");
+										alert("You have used up this attack");
+									}
+									else{
+										$.post("Battle",{"type":"wild","state":"attack","uid":uId,"wildID":wildId,"a_id":attackId},function(data){
+											var res = JSON.parse(data);
+											if(res.status){
+												var userhp = $(poke).children(".card-content").children("p")[2];
+												var wildhp = $("#oppinfo").children("p")[2];
+												$(userhp).text("HP : "+res.UserCurrHP+"/"+res.UserHp);
+												$(wildhp).text("HP : "+res.WildCurrHP+"/"+res.WildHp);
+												$(a_info[1]).text("PP : "+res.PP);
+												alert(res.message);
+												if(res.UserCurrHP == 0 && res.WildCurrHP == 0){
+													alert("Both have fainted");
+													$("#pokemoves").html("");
+													$(poke).off("click");
+												}
+												else if(res.UserCurrHP == 0){
+													alert("Your pokemon is unable to battle, choose another pokemon or leave");
+													$("#pokemoves").html("");
+													$(poke).off("click");
+												}
+												else if(res.WildCurrHP == 0){
+													alert("You have won");
+													$("#modal1").modal('close');
+												}										
+											}
+											else{
+												alert(res.Message);
+												$(pokeAttack).off("click");
+											}
+										});
+									}
+								});
+							} 
+						});
+					});
+					
+				}
+			}
+		});		
 	});
 </script>
 </html>
