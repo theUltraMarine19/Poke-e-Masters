@@ -139,6 +139,11 @@ public class Profile extends HttpServlet {
 				PrintWriter out = response.getWriter();
 				out.println(res);
 			}
+			else if(function.equals("Heal team")){
+				String res = Constants.healPlayerTeam(player_id);
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
 		}
 	}
 

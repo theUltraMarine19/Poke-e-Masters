@@ -29,6 +29,11 @@ for(int i=0;i<6;i++){
 %>
 </div>
 <div class="row" >
+<div class="col s3 offset-s9">
+<a id="heal" class="waves-effect waves-light btn">Heal my team</a>
+</div>
+</div>
+<div class="row" >
 <div class="col s2 offset-s5" >
 	<div class="card hoverable">
         <div class="card-image">
@@ -214,6 +219,9 @@ for(int i=0;i<arr.length();i++){
 				var res = JSON.parse(data);
 				fillTeam(res);
 			});
+		});
+		$("#heal").click(function(){
+			alert("Heal clicked");
 		});
 	});
 </script>

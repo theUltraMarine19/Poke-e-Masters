@@ -50,7 +50,7 @@ public class Battle extends HttpServlet {
 				return;
 			}			
 		}
-//		String player_id = s.getAttribute("player_id").toString();
+		String player_id = s.getAttribute("player_id").toString();
 		if((request.getMethod()).equals("POST")){			
 			String battleType = request.getParameter("type");				
 			if(battleType.equals("wild")){
@@ -61,7 +61,12 @@ public class Battle extends HttpServlet {
 					String res = Constants.WildBattleBegin(wildPID, level);
 					PrintWriter out = response.getWriter();
 					out.println(res);
-				}				
+				}
+				else if(state.equals("attack")){
+					String res = Constants.wildAttack(player_id,request.getParameter("uid"),request.getParameter("a_id").substring(1),request.getParameter("wildID"));					
+					PrintWriter out = response.getWriter();
+					out.println(res);
+				}
 			}
 		}
 	}
