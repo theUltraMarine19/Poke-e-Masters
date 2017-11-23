@@ -14,8 +14,8 @@ import org.json.JSONObject;
 
 public class Constants {
 //	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
-	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-//	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
+//	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
+	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
 	public static int[] s_id = {1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656};
@@ -126,13 +126,15 @@ public class Constants {
 			PreparedStatement pstmt = conn.prepareStatement("select password,id,email_verified from player where email=?");){
 			pstmt.setString(1, email);
 			ResultSet r = pstmt.executeQuery();
-			Boolean flag_password=false,flag_email=false,flag_token=false;
+			Boolean flag_password=false,flag_email=false,flag_token=false, flag_admin = false;
 			String id = null;
 			while(r.next()){
 				flag_email = true;
 				if(r.getString(1).equals(password)){
 					flag_password = true;
 					id = r.getString(2);
+					if (id.equals("admin"))
+						flag_admin = true;
 					if(r.getString(3).equals("VERIFIED")){
 						flag_token = true;
 					}
@@ -146,6 +148,10 @@ public class Constants {
 							json.put("success", true);
 							json.put("status", "succesful");
 							json.put("userid",id);
+							if (flag_admin)
+								json.put("admin", true);
+							else
+								json.put("admin", false);
 						}
 						catch(Exception e){
 							System.out.println("Error : "+e);

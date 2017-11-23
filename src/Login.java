@@ -41,13 +41,21 @@ public class Login extends HttpServlet {
 			return;
 		}
 		else {
+			System.out.println(s.getAttribute("player_id"));
+			
 			if(s.getAttribute("player_id")==null) {
 				s.invalidate();
 				RequestDispatcher view = request.getRequestDispatcher("Login.jsp");
 				view.forward(request, response);		
 				return;
-			}			
-			response.sendRedirect("Home");
+			}
+			else if (s.getAttribute("player_id").equals("admin"))
+			{
+				System.out.println("Admin Redirect");
+				response.sendRedirect("Admin");
+			}
+			else
+				response.sendRedirect("Home");
 			return;
 		}
 	}
@@ -75,6 +83,11 @@ public class Login extends HttpServlet {
 			else{
 				try{
 					JSONObject json = new JSONObject(res);
+					if(json.getBoolean("success") && json.getBoolean("admin")){
+						HttpSession session = request.getSession(true);
+						session.setAttribute("player_id", "admin");
+						System.out.println("Admin : ");
+					}
 					if(json.getBoolean("success")){
 						HttpSession session = request.getSession(true);
 						session.setAttribute("player_id", json.getString("userid"));
