@@ -126,13 +126,15 @@ public class Constants {
 			PreparedStatement pstmt = conn.prepareStatement("select password,id,email_verified from player where email=?");){
 			pstmt.setString(1, email);
 			ResultSet r = pstmt.executeQuery();
-			Boolean flag_password=false,flag_email=false,flag_token=false;
+			Boolean flag_password=false,flag_email=false,flag_token=false, flag_admin = false;
 			String id = null;
 			while(r.next()){
 				flag_email = true;
 				if(r.getString(1).equals(password)){
 					flag_password = true;
 					id = r.getString(2);
+					if (id.equals("admin"))
+						flag_admin = true;
 					if(r.getString(3).equals("VERIFIED")){
 						flag_token = true;
 					}
@@ -146,6 +148,10 @@ public class Constants {
 							json.put("success", true);
 							json.put("status", "succesful");
 							json.put("userid",id);
+							if (flag_admin)
+								json.put("admin", true);
+							else
+								json.put("admin", false);
 						}
 						catch(Exception e){
 							System.out.println("Error : "+e);
