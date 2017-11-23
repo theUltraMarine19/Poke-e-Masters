@@ -115,7 +115,7 @@
 		    if (Math.floor((Math.random() * 10) + 1) < numSteps)
 		    {
 		    	var wildId = (Math.floor(Math.random() * 800) + 1);
-		    	var wildLvl = (Math.floor(Math.random()*40)+10);
+		    	var wildLvl = (Math.floor(Math.random()*10)+5);
 		    	$("#panel").show();
 				$("#panelImg").append("<img src=\"./Pokemons/front/"+wildId+".png\" id=\"imgWild\">\n");
 		    	$("#panelContent").append("<p>Wild Pokemon appeared!!!<\p><p>Level : "+wildLvl+"</p><br>");
@@ -305,8 +305,7 @@
 												var x = $("#selectedpokemon").children(".card-content").children("p");
 												$(x[2]).text("HP : "+res.UserCurrHP+"/"+res.UserHp);
 												$(wildhp).text("HP : "+res.WildCurrHP+"/"+res.WildHp);
-												$(a_info[1]).text("PP : "+res.PP);
-												alert(res.message);
+												$(a_info[1]).text("PP : "+res.PP);												
 												$("#msg").append("<p style:\"font-size:small\">"+res.message+"</p>");								
 												if(res.UserCurrHP == 0 && res.WildCurrHP == 0){
 													alert("Both have fainted");

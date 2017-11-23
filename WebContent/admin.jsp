@@ -52,7 +52,7 @@ $(document).ready(function(){
 		$.post("Admin",{"function":"selection","choice":"gymLeader"},function(data){
 			var res = JSON.parse(data);
 			if(res.success){
-				window.location.replace("Admin");
+				window.location.replace("gymLeader");
 			}
 			else{
 				alert("Sorry, something went wrong try again");

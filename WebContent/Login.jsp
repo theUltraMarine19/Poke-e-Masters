@@ -57,7 +57,7 @@ $(document).ready(function(){
 					window.location.replace("Admin");
 				}
 				else
-					window.location.replace("Home");
+					window.location.replace("Profile");
 			}
 			else{
 				alert(obj.status);	

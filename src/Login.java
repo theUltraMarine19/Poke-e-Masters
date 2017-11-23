@@ -55,7 +55,7 @@ public class Login extends HttpServlet {
 				response.sendRedirect("Admin");
 			}
 			else
-				response.sendRedirect("Home");
+				response.sendRedirect("Profile");
 			return;
 		}
 	}
