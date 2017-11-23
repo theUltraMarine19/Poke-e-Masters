@@ -41,10 +41,10 @@
 
 
 	<script type="text/javascript">
-		var size = 15;
+		var size = 20;
 		var dummy = 0;
 		<%
-		InputStream input = getServletContext().getResourceAsStream("./Maps/map1.txt");
+		InputStream input = getServletContext().getResourceAsStream("./Maps/map.txt");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
 
         StringBuilder sb = new StringBuilder();
@@ -149,15 +149,15 @@
     left: 300px;
     top: 70px;
     float: left;
-    background-image: url('./Maps/map1.png');
-    width: 464px;
+    background-image: url('./Maps/map.png');
+    width: 460px;
     height: 320px;
     
 }
 #img2 {
     position: absolute;
-    left: 134px;
-    top: 185px;
+    left: 120px;
+    top: 180px;
 }
 
 </style>

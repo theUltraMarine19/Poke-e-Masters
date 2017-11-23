@@ -78,10 +78,8 @@ public class Admin extends HttpServlet {
 				String choice = request.getParameter("choice");
 				if (choice.equals("gymLeader"))
 				{
-//					RequestDispatcher view = request.getRequestDispatcher("admin.jsp");
-//					System.out.println("Forwarding to gymLeader.jsp page");
-//					view.forward(request, response);
-					response.sendRedirect("gymLeader");
+					
+					return;
 				}
 //				if(function.equals("avatar")){
 //					result = Constants.get_setAvatarChosen(player_id, false, src);

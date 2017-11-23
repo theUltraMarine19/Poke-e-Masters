@@ -48,16 +48,14 @@ ul li {
 <script>
 $(document).ready(function(){
 	$(".container").animate({opacity:"1"},1500);
-	$("#gym").click(function(){
-		$.post("Admin",{"function":"selection","choice":"gymLeader"},function(data){
-			var res = JSON.parse(data);
-			if(res.success){
-				window.location.replace("Admin");
-			}
-			else{
-				alert("Sorry, something went wrong try again");
-			}
+	$("#gym").on('click',function(){
+	    window.location = "gymLeader";
 		});
+	$("#map").on('click',function(){
+	    window.location = "CreateMap";
+		});
+	$("#logout").on('click',function(){
+	    window.location = "Logout";
 		});
 	// $("#logout").click(function()){
 	// 	$.post("Logout", function(data){
