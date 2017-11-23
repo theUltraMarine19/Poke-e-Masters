@@ -19,12 +19,15 @@ CREATE TABLE Attack
       PRIMARY KEY (AttackID)
 );
 
--- CREATE TABLE AritificialPlayer
--- (
---       APid VARCHAR(8),
---       APname VARCHAR(15) NOT NULL,
---       PRIMARY KEY (APid)
--- );
+CREATE TABLE ArtificialPlayer
+(
+      APid VARCHAR(8),
+      APname VARCHAR(15) NOT NULL,
+      APcity VARCHAR(20),
+      APavatar INT DEFAULT 0,
+      Badge INT DEFAULT 0, 
+      PRIMARY KEY (APid)
+);
 
 -- CREATE TABLE Item
 -- (
@@ -145,6 +148,20 @@ CREATE TABLE PlayerPokemon
       EV INT DEFAULT 50,
       PRIMARY KEY (UID, ID),
       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+      FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
+);
+
+CREATE TABLE APPlayerPokemon
+(
+      ID VARCHAR(8),
+      PID VARCHAR(4),
+      Level INT NOT NULL,
+      UID VARCHAR(4),
+      CurrentHP INT NOT NULL,
+      IV INT DEFAULT 0,
+      EV INT DEFAULT 50,
+      PRIMARY KEY (UID, ID),
+      FOREIGN KEY (ID) REFERENCES ArtificialPlayer(APid) ON DELETE CASCADE,
       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
 );
 
