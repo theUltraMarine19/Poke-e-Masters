@@ -126,6 +126,24 @@ public class Profile extends HttpServlet {
 				PrintWriter out = response.getWriter();
 				out.println(ac_moves);
 			}
+			else if(function.equals("Get pokemon moves")){
+				String uid = (request.getParameter("uid")).split(" ")[2];
+				String res = Constants.getPlayerPokemonMoves(player_id,uid);
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
+			else if(function.equals("Evolve pokemon")){				
+				String uid = (request.getParameter("uid")).split(" ")[2];
+				System.out.println(uid);
+				String res = Constants.EvolvePokemon(player_id, uid);
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
+			else if(function.equals("Heal team")){
+				String res = Constants.healPlayerTeam(player_id);
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
 		}
 	}
 

@@ -29,6 +29,11 @@ for(int i=0;i<6;i++){
 %>
 </div>
 <div class="row" >
+<div class="col s3 offset-s9">
+<a id="heal" class="waves-effect waves-light btn">Heal my team</a>
+</div>
+</div>
+<div class="row" >
 <div class="col s2 offset-s5" >
 	<div class="card hoverable">
         <div class="card-image">
@@ -87,6 +92,7 @@ for(int i=0;i<arr.length();i++){
       <p id="BaseAttack">Alvin</p>
       <p id="BaseSpeed">Alvin</p>
       <p id="BaseDefence">Alvin</p>
+      <a id="evolve" style="display:none;" href="#">Evolve !</a>
       <a id="addteam" href="#" class="indigo-text">Add to my team</a>
     </div>
     <div id="CurrMoves" class="col s3">
@@ -152,7 +158,9 @@ for(int i=0;i<arr.length();i++){
 	}
 	
 	$(document).ready(function(){
-		$('.modal').modal();
+		$('.modal').modal({complete:function(){
+			$("#evolve").css("display","none");
+		}});
 		$("#navbar").load("navbar1.html",function(){
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
@@ -181,6 +189,9 @@ for(int i=0;i<arr.length();i++){
 				var currMoves = res.CurrentMoves;
 				var availableMoves = res.AvailableMoves;
 				fillMoves(currMoves,availableMoves,c[0]);
+				if(res.EvolveAvailable){
+					$("#evolve").css("display","block");
+				}
 				$("#modal1").modal("open");
 			});
 		});
@@ -192,10 +203,25 @@ for(int i=0;i<arr.length();i++){
 				fillTeam(res);
 			});
 		});
+		$("#evolve").click(function(){
+			event.preventDefault();			
+			$.post("Profile",{"function":"Evolve pokemon","uid":$("#Partner").text()},function(data){
+				var res = JSON.parse(data);
+				if(res.success){
+					location.reload();	
+				}				
+			});
+		});
 		$(".rmteam").click(function(event){
 			event.preventDefault();
 			var c = $(this).siblings("p").first().text();
 			$.post("Profile",{"function":"Remove from my team","uid":c},function(data){
+				var res = JSON.parse(data);				
+				fillTeam(res);
+			});
+		});
+		$("#heal").click(function(){
+			$.post("Profile",{"function":"Heal team"},function(data){
 				var res = JSON.parse(data);
 				fillTeam(res);
 			});

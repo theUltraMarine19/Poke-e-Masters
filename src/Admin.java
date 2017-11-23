@@ -78,29 +78,27 @@ public class Admin extends HttpServlet {
 				String choice = request.getParameter("choice");
 				if (choice.equals("gymLeader"))
 				{
-					
-					return;
+					result = true;
+//					RequestDispatcher view = request.getRequestDispatcher("admin.jsp");
+//					System.out.println("Forwarding to gymLeader.jsp page");
+//					view.forward(request, response);
+					JSONObject json = new JSONObject();
+					try{
+						if(result){
+							json.put("success", true);
+						}
+						else{
+							json.put("success", false);
+						}
+					}
+					catch(Exception e){
+						System.out.println("Error : "+e);
+					}
+					PrintWriter out = response.getWriter();
+					out.println(json.toString());
+
 				}
-//				if(function.equals("avatar")){
-//					result = Constants.get_setAvatarChosen(player_id, false, src);
-//				}
-//				else if(function.equals("starter_pokemon")){
-//					result = Constants.get_setStarterPokemon(player_id, false, src);
-//				}
-//				JSONObject json = new JSONObject();
-//				try{
-//					if(result){
-//						json.put("success", true);
-//					}
-//					else{
-//						json.put("success", false);
-//					}
-//				}
-//				catch(Exception e){
-//					System.out.println("Error : "+e);
-//				}
-//				PrintWriter out = response.getWriter();
-//				out.println(json.toString());
+
 			}
 		}
 	}

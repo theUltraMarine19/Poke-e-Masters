@@ -19,22 +19,25 @@ CREATE TABLE Attack
       PRIMARY KEY (AttackID)
 );
 
--- CREATE TABLE AritificialPlayer
--- (
---       APid VARCHAR(8),
---       APname VARCHAR(15) NOT NULL,
---       PRIMARY KEY (APid)
--- );
+CREATE TABLE ArtificialPlayer
+(
+      APid VARCHAR(8),
+      APname VARCHAR(15) NOT NULL,
+      APcity VARCHAR(20),
+      APavatar INT DEFAULT 0,
+      Badge INT DEFAULT 0, 
+      PRIMARY KEY (APid)
+);
 
--- CREATE TABLE Item
--- (
---       ItemID VARCHAR(8),
---       Name VARCHAR(15) NOT NULL,
---       Cost INT DEFAULT 0,
---       EffectNumber INT DEFAULT 0,
---       EffectValue INT DEFAULT 0,
---       PRIMARY KEY (ItemID)
--- );
+CREATE TABLE Item
+(
+      ItemID VARCHAR(8),
+      Name VARCHAR(30) NOT NULL,
+      Cost INT DEFAULT 0,
+      Effect VARCHAR(10) DEFAULT NULL,
+      EffectValue INT DEFAULT 0,
+      PRIMARY KEY (ItemID)
+);
 
 -- CREATE TABLE PokemonType
 -- (
@@ -53,11 +56,9 @@ CREATE TABLE Player
       Email VARCHAR(30) NOT NULL UNIQUE,
       Experience INT DEFAULT 0,
       Money INT DEFAULT 1000,
-      CurrCityId VARCHAR(4),
       email_verified VARCHAR(10),
       avatar_chosen INT DEFAULT 0,
       starter_pokemon INT DEFAULT 0,
-      FOREIGN KEY (CurrCityID) REFERENCES City(CityID) ON DELETE SET NULL,
       PRIMARY KEY (ID)
 );
 
@@ -72,15 +73,15 @@ CREATE TABLE Player
 --       FOREIGN KEY (CityID) REFERENCES City(CityID) ON DELETE CASCADE
 -- );
 
--- CREATE TABLE HasItem
--- (
---       Count INT DEFAULT 0,
---       ID VARCHAR(8),
---       ItemID VARCHAR(8),
---       PRIMARY KEY (ID, ItemID),
---       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
---       FOREIGN KEY (ItemID) REFERENCES Item(ItemID) ON DELETE CASCADE
--- );
+CREATE TABLE HasItem
+(
+      Count INT DEFAULT 0,
+      ID VARCHAR(8),
+      ItemID VARCHAR(8),
+      PRIMARY KEY (ID, ItemID),
+      FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+      FOREIGN KEY (ItemID) REFERENCES Item(ItemID) ON DELETE CASCADE
+);
 
 -- CREATE TABLE HasWonBadge
 -- (
@@ -103,15 +104,13 @@ CREATE TABLE Player
 --       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE
 -- );
 
--- CREATE TABLE TypeEffect
--- (
---       MultFactor NUMERIC(4,2) DEFAULT 0.00,
---       AttackerTypeID VARCHAR(4),
---       ReceiverTypeID VARCHAR(4),
---       PRIMARY KEY (AttackerTypeID, ReceiverTypeID),
---       FOREIGN KEY (AttackerTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE,
---       FOREIGN KEY (ReceiverTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE
--- );
+CREATE TABLE TypeEffect
+(
+      AttackerType VARCHAR(10),
+      ReceiverType VARCHAR(10),
+      MultFactor INT DEFAULT 100,
+      PRIMARY KEY (AttackerType, ReceiverType)
+);
 
 CREATE TABLE Pokemon
 (
@@ -127,9 +126,8 @@ CREATE TABLE Pokemon
       MinEvolveLevel INT,
       EvolveIntoID VARCHAR(4),
       EvolveTrigger VARCHAR(20),
+      BaseExp INT DEFAULT 10,
       PRIMARY KEY (PID)
-      -- FOREIGN KEY (EvolveIntoID) REFERENCES Pokemon(PID) ON DELETE SET NULL,
-      -- FOREIGN KEY (TypeID) REFERENCES PokemonType(TypeID) ON DELETE SET DEFAULT
 );
 
 CREATE TABLE PlayerPokemon
@@ -145,6 +143,20 @@ CREATE TABLE PlayerPokemon
       EV INT DEFAULT 50,
       PRIMARY KEY (UID, ID),
       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+      FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
+);
+
+CREATE TABLE APPlayerPokemon
+(
+      ID VARCHAR(8),
+      PID VARCHAR(4),
+      Level INT NOT NULL,
+      UID VARCHAR(4),
+      CurrentHP INT NOT NULL,
+      IV INT DEFAULT 0,
+      EV INT DEFAULT 50,
+      PRIMARY KEY (UID, ID),
+      FOREIGN KEY (ID) REFERENCES ArtificialPlayer(APid) ON DELETE CASCADE,
       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
 );
 
