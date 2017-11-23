@@ -20,6 +20,7 @@ public class Constants {
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
 	public static int[] s_id = {1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656};
+	public static int apctr = 0;
 	private Constants(){
 		
 	}
@@ -90,6 +91,81 @@ public class Constants {
 			System.out.println("Error : "+e);
 		}
 		return 0;
+	}
+	
+	public static String addAPPlayer(String name,String city_name,int avatar,int badge){
+		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);
+				PreparedStatement pstmt = conn.prepareStatement("insert into ArtificialPlayer values(nextval('APid'),?,?,?,?)");){
+				pstmt.setString(1,name);
+				pstmt.setString(2, city_name);
+				pstmt.setInt(3, avatar);
+				pstmt.setInt(4, badge);
+				pstmt.executeUpdate();
+				PreparedStatement pstemp = conn.prepareStatement(" select currval('ApID')");
+				ResultSet rst = pstemp.executeQuery();
+				while (rst.next())
+				{
+					apctr = rst.getInt(1);
+				}
+				JSONObject json = new JSONObject();
+				try{
+					json.put("success", true);
+					json.put("apid", apctr);
+					return json.toString();
+				}
+				catch(Exception e){
+					System.out.println("Error : "+e);
+					json.put("success", true);
+					return json.toString();
+				}
+			}
+			catch(Exception sqle){
+				System.out.println("Error : "+sqle);
+				
+			}
+		return null;  
+	}
+	
+	public static String addAPPlayerPokemon(int apid, int[] poke, int[] levels){
+		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);){
+			for (int k = 0 ; poke[k]!=0 ; k++)
+			{
+				System.out.println(k);
+				PreparedStatement pstmt = conn.prepareStatement("insert into APPlayerPokemon values(?,?,?,?,?)");
+				pstmt.setString(1,Integer.toString(apid));
+				pstmt.setString(2, Integer.toString(poke[k]));
+				pstmt.setInt(3, levels[k]);
+				pstmt.setString(4, Integer.toString(k+1));
+				PreparedStatement ps = conn.prepareStatement("select BaseHP from Pokemon where PID=?");
+				ps.setString(1, Integer.toString(poke[k]));
+				ResultSet rs = ps.executeQuery();
+				int basehp = 100;
+				while (rs.next())
+				{
+					basehp = rs.getInt(1);
+					
+				}
+				int hp = calculateStat(levels[k], basehp, 0, 50, true);
+				pstmt.setInt(5, hp);
+				pstmt.executeUpdate();
+				
+			}
+				JSONObject json = new JSONObject();
+				json.put("success", true);
+				return json.toString();
+			}
+			catch(Exception sqle){
+				System.out.println("Error : "+sqle);
+				JSONObject json = new JSONObject();
+				try{
+					json.put("success", false);
+					return json.toString();
+				}
+				catch(Exception e){
+					System.out.println("Error : "+e);
+				}
+			}
+		return null;  
 	}
 	
 	public static String addPlayer(String name,String nick_name,String password,String email){
