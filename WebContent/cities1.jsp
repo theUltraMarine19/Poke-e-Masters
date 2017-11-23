@@ -234,6 +234,7 @@
 		for(i=0;i<6;i++){
 			var id = "#pokemon"+(i+1);
 			$(id).click(function(){
+				alert("selected pokemon");
 				var c = $(this).children(".card-content").first().children("p");
 				$("#img3").attr({"src":"./Pokemons/front/"+$(c[3]).text()+".png","alt":"No Image"});
 				$("#img3").css({"visibility":"visible"});
