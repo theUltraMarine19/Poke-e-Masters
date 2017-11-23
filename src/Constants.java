@@ -93,7 +93,7 @@ public class Constants {
 	
 	public static String addPlayer(String name,String nick_name,String password,String email){
 		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);
-				PreparedStatement pstmt = conn.prepareStatement("INSERT INTO PLAYER(NAME,NICKNAME,ID,PASSWORD,EMAIL,CURRCITYID,email_verified) VALUES(?,?,nextval('UserID'),?,?,'1',?)");){
+				PreparedStatement pstmt = conn.prepareStatement("INSERT INTO PLAYER(NAME,NICKNAME,ID,PASSWORD,EMAIL,email_verified) VALUES(?,?,nextval('UserID'),?,?,?)");){
 				pstmt.setString(1,name);
 				pstmt.setString(2, nick_name);
 				pstmt.setString(3, password);
@@ -731,7 +731,7 @@ public class Constants {
 	public static String wildAttack(String player_id,String uid,String attackId,String wildId){
 		JSONObject json = new JSONObject();		
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement userPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name from PlayerPokemon as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
+			PreparedStatement userPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,Experience,BaseExp from PlayerPokemon as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
 			PreparedStatement userMoveData = conn.prepareStatement("select a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,ppm.PP from PlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=? and ppm.AttackID=?");
 			PreparedStatement wildMoveData = conn.prepareStatement("select wpm.AttackId, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type, wpm.PP from WildPokemonMoves as wpm, Attack as a where wpm.AttackID=a.AttackID and wpm.WildID=?");
 			PreparedStatement wildPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name from WildPokemon as wp, Pokemon as p where wp.PID=p.PID and wp.WildID=?");){
@@ -802,7 +802,7 @@ public class Constants {
 						UserPokeUpdate.executeUpdate();
 						WildPokeMoveUpdate.executeUpdate();
 						json.put("WildDoneDamage", WildDoneDamage);
-						Message = Message + "Enemy "+r3.getString(10)+ " used "+r4.getString(2)+ " and caused "+Integer.toString(WildDoneDamage)+"HP damage.";
+						Message = Message + "The Wild "+r3.getString(10)+ " used "+r4.getString(2)+ " and caused "+Integer.toString(WildDoneDamage)+"HP damage.";
 						
 					}
 					else {
@@ -813,7 +813,25 @@ public class Constants {
 						UserPokeMoveUpdate.executeUpdate();
 						json.put("UserDoneDamage", UserDoneDamage);
 						json.put("PP", r2.getInt(5)-1);
-						Message = Message + "Your "+r1.getString(10)+ " used "+r2.getString(1)+ " and caused "+Integer.toString(UserDoneDamage)+"HP damage.";
+						Message = Message + "\nYour "+r1.getString(10)+ " used "+r2.getString(1)+ " and caused "+Integer.toString(UserDoneDamage)+"HP damage.";
+						if(CurrHp2==0) {
+							PreparedStatement UserPokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set Experience=? and Level=? where ID=? and UID=?");
+							int experience =1 +(int) ((r1.getInt(12)*Level1/5.0)*(Math.pow((2*Level2)+10, 2.5)/Math.pow(Level1+Level2+10, 2.5)));
+							int Level11 = Level1+1;
+							int nextLevelExperience = (int) (((6/5.0)*Level11*Level11*Level11)-(15*Level11*Level11)+(100*Level11)-140);
+							Message = Message + "\nThe Wild "+r3.getString(10)+ " fainted.\nYour "+r1.getString(10)+" gained "+Integer.toString(experience)+" exp points.";
+							UserPokeExpUpdate.setInt(1, r1.getInt(11)+experience);
+							if(nextLevelExperience>=experience) {
+								UserPokeExpUpdate.setInt(2, Level11);
+								Message = Message + "\nYour "+r1.getString(10)+ " has leveled up.";
+							}
+							else {
+								UserPokeExpUpdate.setInt(2, Level1);
+							}
+							UserPokeExpUpdate.setString(3, player_id);
+							UserPokeExpUpdate.setString(4, uid);
+							UserPokeExpUpdate.executeUpdate();
+						}
 					}
 					else {
 						json.put("UserDoneDamage", 0);
@@ -852,6 +870,10 @@ public class Constants {
 		catch(Exception e){
 			System.out.println("Error : "+e);
 		}
+		return null;
+	}
+	
+	public static String wildUseItem(String player_id,String uid,String itemId,String wildId){
 		return null;
 	}
 }
