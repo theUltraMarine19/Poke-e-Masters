@@ -125,6 +125,64 @@ public class Constants {
 		return null;  
 	}
 	
+	public static int NumGymLeaders()
+	{
+		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);){
+			PreparedStatement pstmt = conn.prepareStatement("select count(*) from  Artificialplayer where APid is NOT NULL");
+			ResultSet rs = pstmt.executeQuery();
+			int num = -1;
+			while (rs.next())
+			{
+				num = rs.getInt(1);
+			}
+			return num;
+		}
+		catch (Exception ex)
+		{
+			System.out.println("Error" + ex);
+			return -1;
+		}
+	}
+	
+	public static String getGymInfo()
+	{
+		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);){
+			JSONArray jarray = new JSONArray();
+			PreparedStatement pstmt = conn.prepareStatement("select * from artificialplayer where apid is NOT NULL");
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next())
+			{
+				JSONObject obj = new JSONObject();
+				obj.put("name", rs.getString(2));
+				obj.put("city", rs.getString(3));
+				obj.put("avatar", rs.getInt(4));
+				obj.put("badge", rs.getInt(5));
+				PreparedStatement ps = conn.prepareStatement("select * from APPlayerPokemon where ID=?");
+				ps.setString(1, Integer.toString(rs.getInt(1)));
+				ResultSet rs1 = ps.executeQuery();
+				JSONArray poke = new JSONArray();
+				while (rs1.next())
+				{
+					JSONObject objp = new JSONObject();
+					objp.put("pid", rs1.getString(2));
+					objp.put("level", rs1.getInt(3));
+					objp.put("currenthp", rs1.getInt(5));
+					poke.put(objp);
+					
+				}
+				obj.put("pokemon", poke);
+				jarray.put(obj);
+			}
+			return jarray.toString();
+		}
+		catch (Exception ex)
+		{
+			System.out.println("Error" + ex);
+			return null;
+		}
+	}
+	
+	
 	public static String addAPPlayerPokemon(int apid, int[] poke, int[] levels){
 		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);){
 			for (int k = 0 ; poke[k]!=0 ; k++)
@@ -147,6 +205,20 @@ public class Constants {
 				int hp = calculateStat(levels[k], basehp, 0, 50, true);
 				pstmt.setInt(5, hp);
 				pstmt.executeUpdate();
+				PreparedStatement psa = conn.prepareStatement("select attack.attackid,pp from HasAttack, attack where pid = ? and levellearnedat <= ? and hasattack.attackid = attack.attackid order by attackid desc limit 4");
+				psa.setString(1, Integer.toString(poke[k]));
+				psa.setInt(2, levels[k]);
+				ResultSet rsa = psa.executeQuery();
+				while (rsa.next())
+				{
+					PreparedStatement psa1 = conn.prepareStatement("insert into applayerpokemonmoves values(?,?,?,?)");
+					psa1.setInt(4,  rsa.getInt(2));
+					psa1.setString(1,Integer.toString(apid));
+					psa1.setString(2, Integer.toString(k+1));
+					psa1.setString(3,rsa.getString(1));
+					psa1.executeUpdate();					
+				}
+				
 				
 			}
 				JSONObject json = new JSONObject();

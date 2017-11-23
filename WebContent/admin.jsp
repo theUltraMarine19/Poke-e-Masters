@@ -59,6 +59,12 @@ $(document).ready(function(){
 			}
 		});
 		});
+	$("#logout").on("click", function(){
+    	$.post("Logout", function(data){
+			alert("Successfully logged out");
+			window.location.replace("Login");
+		});
+	}); 
 	// $("#logout").click(function()){
 	// 	$.post("Logout", function(data){
 	// 		alert("Successfully logged out");
