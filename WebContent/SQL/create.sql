@@ -103,15 +103,13 @@ CREATE TABLE Player
 --       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE
 -- );
 
--- CREATE TABLE TypeEffect
--- (
---       MultFactor NUMERIC(4,2) DEFAULT 0.00,
---       AttackerTypeID VARCHAR(4),
---       ReceiverTypeID VARCHAR(4),
---       PRIMARY KEY (AttackerTypeID, ReceiverTypeID),
---       FOREIGN KEY (AttackerTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE,
---       FOREIGN KEY (ReceiverTypeID) REFERENCES PokemonType(TypeID) ON DELETE CASCADE
--- );
+CREATE TABLE TypeEffect
+(
+      AttackerType VARCHAR(10),
+      ReceiverType VARCHAR(10),
+      MultFactor INT DEFAULT 100,
+      PRIMARY KEY (AttackerType, ReceiverType)
+);
 
 CREATE TABLE Pokemon
 (

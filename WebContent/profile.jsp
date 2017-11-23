@@ -216,12 +216,15 @@ for(int i=0;i<arr.length();i++){
 			event.preventDefault();
 			var c = $(this).siblings("p").first().text();
 			$.post("Profile",{"function":"Remove from my team","uid":c},function(data){
-				var res = JSON.parse(data);
+				var res = JSON.parse(data);				
 				fillTeam(res);
 			});
 		});
 		$("#heal").click(function(){
-			alert("Heal clicked");
+			$.post("Profile",{"function":"Heal team"},function(data){
+				var res = JSON.parse(data);
+				fillTeam(res);
+			});
 		});
 	});
 </script>

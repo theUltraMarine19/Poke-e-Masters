@@ -737,9 +737,9 @@ public class Constants {
 			PreparedStatement wildPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name from WildPokemon as wp, Pokemon as p where wp.PID=p.PID and wp.WildID=?");){
 			userPokeData.setString(1, player_id);
 			userPokeData.setString(2, uid);
-			userMoveData.setString(2, uid);
-			userMoveData.setString(3, attackId);
 			userMoveData.setString(1,player_id);
+			userMoveData.setString(2, uid);
+			userMoveData.setString(3, attackId);			
 			wildMoveData.setString(1, wildId);
 			wildPokeData.setString(1, wildId);
 			ResultSet r1 = userPokeData.executeQuery();
@@ -754,7 +754,7 @@ public class Constants {
 			if(r2.getInt(5)>0) {
 				json.put("status", true);
 				int temp=0;
-				while(temp!=0) {
+				while(temp==0) {
 					r4 = wildMoveData.executeQuery();
 					int rand = ThreadLocalRandom.current().nextInt(0, 4);
 					for(int i=0;i<=rand;i++)
@@ -846,7 +846,24 @@ public class Constants {
 	}
 	
 	public static String healPlayerTeam(String player_id){
-		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement p1 = conn.prepareStatement("select uid,pokemon.pid,basehp,level,iv,ev from playerpokemon,pokemon where id=? and teamposition=1 and playerpokemon.pid=pokemon.pid");){
+			p1.setString(1,player_id);
+			ResultSet r = p1.executeQuery();
+			while(r.next()){
+				String uid = r.getString(1);				
+				int bhp = r.getInt(3),lvl = r.getInt(4),iv=r.getInt(5),ev=r.getInt(6);
+				int currhp = Constants.calculateStat(lvl, bhp, ev, iv, true);
+				PreparedStatement p2 = conn.prepareStatement("update playerpokemon set currenthp=? where id=? and uid=?");
+				PreparedStatement p3 = conn.prepareStatement("update playerpokemonmoves set pp=(select pp from attack where attack.attackid=playerpokemonmoves.attackid) where id=? and uid=?");
+				p2.setInt(1, currhp);
+				p2.setString(2, player_id);
+				p2.setString(3, uid);
+				p3.setString(1, player_id);
+				p3.setString(2, uid);
+				p2.executeUpdate();
+				p3.executeUpdate();
+			}
 			return Constants.getPlayerPokemonTeamInfo(player_id);
 		}
 		catch(Exception e){
