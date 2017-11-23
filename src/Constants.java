@@ -13,9 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Constants {
-//	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
+	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
 //	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
+//	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
+//	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
 	public static int[] s_id = {1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656};
@@ -444,7 +445,7 @@ public class Constants {
 							basehp = r.getInt(1);
 						}
 						int x = (int)Math.floor(((basehp+0)*2 + Math.floor(Math.ceil(Math.sqrt(50))/4))*10/100)+20;
-						PreparedStatement pstmt1 = conn.prepareStatement("insert into playerpokemon values(10,'1',?,1024,1,?,?)");
+						PreparedStatement pstmt1 = conn.prepareStatement("insert into playerpokemon values(10,'1',?,560,1,?,?)");
 						pstmt1.setInt(1, x);
 						pstmt1.setString(2,id);
 						pstmt1.setString(3,Integer.toString(src));
@@ -885,9 +886,9 @@ public class Constants {
 			PreparedStatement wildPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name from WildPokemon as wp, Pokemon as p where wp.PID=p.PID and wp.WildID=?");){
 			userPokeData.setString(1, player_id);
 			userPokeData.setString(2, uid);
-			userMoveData.setString(2, uid);
-			userMoveData.setString(3, attackId);
 			userMoveData.setString(1,player_id);
+			userMoveData.setString(2, uid);
+			userMoveData.setString(3, attackId);			
 			wildMoveData.setString(1, wildId);
 			wildPokeData.setString(1, wildId);
 			ResultSet r1 = userPokeData.executeQuery();
@@ -896,13 +897,14 @@ public class Constants {
 			ResultSet r4 = wildMoveData.executeQuery();
 			
 			r1.next();
-			r2.next();
+			if(!attackId.equals("0"))
+				r2.next();
 			r3.next();
 			r4.next();
-			if(r2.getInt(5)>0) {
+			if(attackId.equals("0") || r2.getInt(5)>0) {
 				json.put("status", true);
 				int temp=0;
-				while(temp!=0) {
+				while(temp==0) {
 					r4 = wildMoveData.executeQuery();
 					int rand = ThreadLocalRandom.current().nextInt(0, 4);
 					for(int i=0;i<=rand;i++)
@@ -923,10 +925,15 @@ public class Constants {
 				int Defense2 = calculateStat(Level2,r3.getInt(5),r3.getInt(9),r3.getInt(8),false);
 				int Speed1 = calculateStat(Level1,r1.getInt(6),r1.getInt(9),r1.getInt(8),false);
 				int Speed2 = calculateStat(Level2,r3.getInt(6),r3.getInt(9),r3.getInt(8),false);
-				int UserDoneDamage =(int) (((((2*Level1/5.0)+2)*r2.getInt(2)*(Attack1/Defense2)/50)+2)*(ThreadLocalRandom.current().nextInt(850, 1000)/1000.0));
-				int WildDoneDamage =(int) (((((2*Level2/5.0)+2)*r4.getInt(3)*(Attack2/Defense1)/50)+2)*(ThreadLocalRandom.current().nextInt(850, 1000)/1000.0));
+				int UserDoneDamage = 0;
+				if(!attackId.equals("0"))
+					UserDoneDamage =(int) (((((2*Level1/5.0)+2)*r2.getInt(2)*(Attack1/Defense2)/30.0)+2.0));//*(ThreadLocalRandom.current().nextInt(850, 1000)/1000.0));
+				int WildDoneDamage =(int) (((((2*Level2/5.0)+2)*r4.getInt(3)*(Attack2/Defense1)/30.0)+2.0));//*(ThreadLocalRandom.current().nextInt(850, 1000)/1000.0));
+				System.out.println(Level1+" "+Level2+" "+TotalHp1+" "+TotalHp2+" "+Attack1+" "+Attack2+" "+Defense1+" "+Defense2);
+				System.out.println(((((2*Level1/5.0)+2)*r2.getInt(2)*(Attack1/Defense2)/30.0)+2));
+				System.out.println(((((2*Level2/5.0)+2)*r4.getInt(3)*(Attack2/Defense1)/30.0)+2));
 				//Add STAB effect and Type effect after type effect table is populated
-				if(r2.getInt(2)==0) {
+				if(attackId.equals("0") || r2.getInt(2)==0) {
 					UserDoneDamage=0;
 				}
 				int CurrHp2=Math.max(0, r3.getInt(3)-UserDoneDamage);
@@ -936,7 +943,8 @@ public class Constants {
 				UserPokeUpdate.setString(3, uid);
 				WildPokeUpdate.setInt(1, CurrHp2);
 				WildPokeUpdate.setString(2, wildId);
-				UserPokeMoveUpdate.setInt(1,r2.getInt(5)-1);
+				if(!attackId.equals("0"))
+					UserPokeMoveUpdate.setInt(1,r2.getInt(5)-1);
 				UserPokeMoveUpdate.setString(2,player_id);
 				UserPokeMoveUpdate.setString(3,uid);
 				UserPokeMoveUpdate.setString(4,attackId);
@@ -956,20 +964,21 @@ public class Constants {
 					else {
 						json.put("WildDoneDamage", 0);
 					}
-					if(CurrHp1!=0 || (CurrHp1==0 && Speed1>Speed2)) {
+					if((CurrHp1!=0 || (CurrHp1==0 && Speed1>Speed2)) && !attackId.equals("0")) {
 						WildPokeUpdate.executeUpdate();
 						UserPokeMoveUpdate.executeUpdate();
 						json.put("UserDoneDamage", UserDoneDamage);
 						json.put("PP", r2.getInt(5)-1);
 						Message = Message + "\nYour "+r1.getString(10)+ " used "+r2.getString(1)+ " and caused "+Integer.toString(UserDoneDamage)+"HP damage.";
 						if(CurrHp2==0) {
-							PreparedStatement UserPokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set Experience=? and Level=? where ID=? and UID=?");
+							PreparedStatement UserPokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set (Experience,Level)=(?,?) where ID=? and UID=?");
 							int experience =1 +(int) ((r1.getInt(12)*Level1/5.0)*(Math.pow((2*Level2)+10, 2.5)/Math.pow(Level1+Level2+10, 2.5)));
 							int Level11 = Level1+1;
 							int nextLevelExperience = (int) (((6/5.0)*Level11*Level11*Level11)-(15*Level11*Level11)+(100*Level11)-140);
+							System.out.println(Level11+" "+nextLevelExperience);
 							Message = Message + "\nThe Wild "+r3.getString(10)+ " fainted.\nYour "+r1.getString(10)+" gained "+Integer.toString(experience)+" exp points.";
 							UserPokeExpUpdate.setInt(1, r1.getInt(11)+experience);
-							if(nextLevelExperience>=experience) {
+							if(nextLevelExperience<=r1.getInt(11)+experience) {
 								UserPokeExpUpdate.setInt(2, Level11);
 								Message = Message + "\nYour "+r1.getString(10)+ " has leveled up.";
 							}
@@ -983,7 +992,8 @@ public class Constants {
 					}
 					else {
 						json.put("UserDoneDamage", 0);
-						json.put("PP", r2.getInt(5));
+						if(!attackId.equals("0"))
+							json.put("PP", r2.getInt(5));
 					}
 					conn.commit();
 					conn.setAutoCommit(true);
@@ -992,6 +1002,7 @@ public class Constants {
 					json.put("UserHp", TotalHp1);
 					json.put("WildHp", TotalHp2);
 					json.put("message", Message);
+					json.put("caught", false);
 				}
 				catch(Exception e) {
 					System.out.println("Error : "+e);
@@ -1000,8 +1011,9 @@ public class Constants {
 				}
 			}
 			else {
+				json.put("caught", false);
 				json.put("status", false);
-				json.put("Message", "Insufficient Power Points");
+				json.put("message", "Insufficient Power Points");
 			}
 			return json.toString();
 		}
@@ -1012,7 +1024,24 @@ public class Constants {
 	}
 	
 	public static String healPlayerTeam(String player_id){
-		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement p1 = conn.prepareStatement("select uid,pokemon.pid,basehp,level,iv,ev from playerpokemon,pokemon where id=? and teamposition=1 and playerpokemon.pid=pokemon.pid");){
+			p1.setString(1,player_id);
+			ResultSet r = p1.executeQuery();
+			while(r.next()){
+				String uid = r.getString(1);				
+				int bhp = r.getInt(3),lvl = r.getInt(4),iv=r.getInt(5),ev=r.getInt(6);
+				int currhp = Constants.calculateStat(lvl, bhp, ev, iv, true);
+				PreparedStatement p2 = conn.prepareStatement("update playerpokemon set currenthp=? where id=? and uid=?");
+				PreparedStatement p3 = conn.prepareStatement("update playerpokemonmoves set pp=(select pp from attack where attack.attackid=playerpokemonmoves.attackid) where id=? and uid=?");
+				p2.setInt(1, currhp);
+				p2.setString(2, player_id);
+				p2.setString(3, uid);
+				p3.setString(1, player_id);
+				p3.setString(2, uid);
+				p2.executeUpdate();
+				p3.executeUpdate();
+			}
 			return Constants.getPlayerPokemonTeamInfo(player_id);
 		}
 		catch(Exception e){
@@ -1022,6 +1051,85 @@ public class Constants {
 	}
 	
 	public static String wildUseItem(String player_id,String uid,String itemId,String wildId){
+		JSONObject json = new JSONObject();		
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement wildPokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,p.name from WildPokemon as wp, Pokemon as p where wp.PID=p.PID and wp.WildID=?");
+			PreparedStatement itemData = conn.prepareStatement("select itemId,Name,Effect,EffectValue,Count from Item, HasItem where Item.ItemID=HasItem.ItemID and Item.ItemID=?");){
+			wildPokeData.setString(1, wildId);
+			itemData.setString(1, itemId);
+			ResultSet r1 = wildPokeData.executeQuery();
+			ResultSet r2 = itemData.executeQuery();
+			r2.next();
+			if(r2.getInt(5)>0) {
+				json.put("status", true);
+				PreparedStatement updateItemCount = conn.prepareStatement("UPDATE HasItem set Count=? where id=? and ItemId=?");
+				updateItemCount.setInt(1, r2.getInt(5)-1);
+				updateItemCount.setString(2, player_id);
+				updateItemCount.setString(3, itemId);
+				updateItemCount.executeUpdate();
+				if(r2.getString(3).equals("catch")) {
+					int totalHp = calculateStat(r2.getInt(1), r2.getInt(2), r2.getInt(5), r2.getInt(6), true);
+					int captureProb = (int) ((ThreadLocalRandom.current().nextInt(850, 1000)/1000.0)*((totalHp-r1.getInt(3))/totalHp)*((100-r1.getInt(1))/100))*100;
+					if(((100-r2.getInt(4))*2)<captureProb) {
+						PreparedStatement newPokemon = conn.prepareStatement("INSERT INTO PlayerPokemon (select Level,? as UID,CurrentHP, ? as Experience, 0 as TeamPosition, ? as ID,PID,IV,EV from WildPokemon where WildID = ?)");
+						PreparedStatement playerPokemons = conn.prepareStatement("select count(*) from PlayerPokemon where ID=?");
+						playerPokemons.setString(1, player_id);
+						ResultSet r3 = playerPokemons.executeQuery();
+						r3.next();
+						newPokemon.setInt(1, r3.getInt(1)+1);
+						int experience = (int) (((6/5.0)*r1.getInt(1)*r1.getInt(1)*r1.getInt(1))-(15*r1.getInt(1)*r1.getInt(1))+(100*r1.getInt(1))-140);
+						newPokemon.setInt(2, experience);
+						newPokemon.setString(3, player_id);
+						newPokemon.setString(4, wildId);
+						newPokemon.executeUpdate();
+						json.put("message", "wild "+r1.getString(4)+" was captured!!");
+						json.put("caught", true);
+					}
+					else {
+						String Message = "wild "+r1.getString(4)+" escaped!\n";
+						JSONObject wildAttack = new JSONObject(wildAttack(player_id, uid, "0", wildId));
+						Message = Message + wildAttack.getString("message");
+						json.put("UserCurrHP", wildAttack.get("UserCurrHP"));
+						json.put("WildCurrHP", wildAttack.get("WildCurrHP"));
+						json.put("UserHp", wildAttack.get("UserHP"));
+						json.put("WildHp", wildAttack.get("WildHP"));
+						json.put("message", Message);
+						json.put("caught", false);
+					}
+				}
+				else if(r2.getString(3).equals("heal")) {
+					PreparedStatement playerPokemon = conn.prepareStatement("Select CurrentHP,BaseHP,IV,EV,Level,name from Pokemon, PlayerPokemon where Pokemon.pid=PlayerPokemon.pid and id=? and uid=?");
+					PreparedStatement healPokemon = conn.prepareStatement("UPDATE PlayerPokemon SET CurrentHP=? where id=? and uid=?");
+					playerPokemon.setString(1, player_id);
+					playerPokemon.setString(2, uid);
+					ResultSet r4 = playerPokemon.executeQuery();
+					r4.next();
+					int maxHP = calculateStat(r4.getInt(5), r4.getInt(2), r4.getInt(3), r4.getInt(4), true);
+					healPokemon.setInt(1, Math.min(maxHP, r4.getInt(1)+r2.getInt(4)));
+					healPokemon.setString(2, player_id);
+					healPokemon.setString(3, uid);
+					healPokemon.executeUpdate();
+					String Message = "Your "+r4.getString(6)+" healed "+ r2.getInt(4) +" HP using "+r2.getString(2) +".\n";
+					JSONObject wildAttack = new JSONObject(wildAttack(player_id, uid, "0", wildId));
+					Message = Message + wildAttack.getString("message");
+					json.put("UserCurrHP", wildAttack.get("UserCurrHP"));
+					json.put("WildCurrHP", wildAttack.get("WildCurrHP"));
+					json.put("UserHp", wildAttack.get("UserHP"));
+					json.put("WildHp", wildAttack.get("WildHP"));
+					json.put("message", Message);
+					json.put("caught", false);
+				}
+			}
+			else {
+				json.put("caught", false);
+				json.put("status", false);
+				json.put("message", "You do not have that item!");
+			}
+			return json.toString();
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
 		return null;
 	}
 }

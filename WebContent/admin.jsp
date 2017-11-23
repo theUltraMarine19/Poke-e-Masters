@@ -48,6 +48,7 @@ ul li {
 <script>
 $(document).ready(function(){
 	$(".container").animate({opacity:"1"},1500);
+
 	$("#gym").click(function(){
 		$.post("Admin",{"function":"selection","choice":"gymLeader"},function(data){
 			var res = JSON.parse(data);
@@ -57,19 +58,20 @@ $(document).ready(function(){
 			else{
 				alert("Sorry, something went wrong try again");
 			}
+
 		});
+	});
+	$("#map").on('click',function(){
+	    window.location = "CreateMap";
 		});
+
 	$("#logout").on("click", function(){
     	$.post("Logout", function(data){
 			alert("Successfully logged out");
 			window.location.replace("Login");
 		});
 	}); 
-	// $("#logout").click(function()){
-	// 	$.post("Logout", function(data){
-	// 		alert("Successfully logged out");
-	// 	});
-	// });
+
 	});
 </script>
 </html>

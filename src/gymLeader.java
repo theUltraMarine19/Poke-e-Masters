@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,11 +34,35 @@ public class gymLeader extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		JSONArray poke_dex_info = Constants.getPokedexInfo();
-		request.setAttribute("pokemons",poke_dex_info);
-		RequestDispatcher view = request.getRequestDispatcher("gymLeader.jsp");
-		System.out.println("Forwarding to gymLeader.jsp page");
-		view.forward(request, response);
+
+		HttpSession s = request.getSession(false);
+		if(s==null) {			
+			response.sendRedirect("Login");
+			return;
+		}
+		else {
+			if(s.getAttribute("player_id")==null) {
+				s.invalidate();		
+				response.sendRedirect("Login");
+				return;
+			}
+			else {
+				String id = (String) s.getAttribute("player_id");
+				if (id.equals("admin")) {
+					JSONArray poke_dex_info = Constants.getPokedexInfo();
+					request.setAttribute("pokemons",poke_dex_info);
+					RequestDispatcher view = request.getRequestDispatcher("gymLeader.jsp");
+					System.out.println("Forwarding to gymLeader.jsp page");
+					view.forward(request, response);
+				}
+				else {
+					s.invalidate();		
+					response.sendRedirect("Login");
+					return;
+				}
+			}
+		}
+
 		
 	}
 
@@ -46,6 +71,7 @@ public class gymLeader extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
 		if(request.getMethod().equals("POST")){
 //			String function = request.getParameter("function");
 //			if(function == null){

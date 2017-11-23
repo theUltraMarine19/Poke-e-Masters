@@ -7,3 +7,4 @@ psql -h localhost -p $1 -d postgres -f pokemonEvolve.sql
 psql -h localhost -p $1 -d postgres -f attacks.sql
 psql -h localhost -p $1 -d postgres -f pokemonMoves.sql
 psql -h localhost -p $1 -d postgres -f typeEffect.sql
+psql -h localhost -p $1 -d postgres -f item.sql

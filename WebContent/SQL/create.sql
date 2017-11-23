@@ -29,15 +29,15 @@ CREATE TABLE ArtificialPlayer
       PRIMARY KEY (APid)
 );
 
--- CREATE TABLE Item
--- (
---       ItemID VARCHAR(8),
---       Name VARCHAR(15) NOT NULL,
---       Cost INT DEFAULT 0,
---       EffectNumber INT DEFAULT 0,
---       EffectValue INT DEFAULT 0,
---       PRIMARY KEY (ItemID)
--- );
+CREATE TABLE Item
+(
+      ItemID VARCHAR(8),
+      Name VARCHAR(30) NOT NULL,
+      Cost INT DEFAULT 0,
+      Effect VARCHAR(10) DEFAULT NULL,
+      EffectValue INT DEFAULT 0,
+      PRIMARY KEY (ItemID)
+);
 
 -- CREATE TABLE PokemonType
 -- (
@@ -73,15 +73,15 @@ CREATE TABLE Player
 --       FOREIGN KEY (CityID) REFERENCES City(CityID) ON DELETE CASCADE
 -- );
 
--- CREATE TABLE HasItem
--- (
---       Count INT DEFAULT 0,
---       ID VARCHAR(8),
---       ItemID VARCHAR(8),
---       PRIMARY KEY (ID, ItemID),
---       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
---       FOREIGN KEY (ItemID) REFERENCES Item(ItemID) ON DELETE CASCADE
--- );
+CREATE TABLE HasItem
+(
+      Count INT DEFAULT 0,
+      ID VARCHAR(8),
+      ItemID VARCHAR(8),
+      PRIMARY KEY (ID, ItemID),
+      FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+      FOREIGN KEY (ItemID) REFERENCES Item(ItemID) ON DELETE CASCADE
+);
 
 -- CREATE TABLE HasWonBadge
 -- (
@@ -106,10 +106,10 @@ CREATE TABLE Player
 
 CREATE TABLE TypeEffect
 (
-      AttackerTypeID VARCHAR(10),
-      ReceiverTypeID VARCHAR(10),
+      AttackerType VARCHAR(10),
+      ReceiverType VARCHAR(10),
       MultFactor INT DEFAULT 100,
-      PRIMARY KEY (AttackerTypeID, ReceiverTypeID),
+      PRIMARY KEY (AttackerType, ReceiverType)
 );
 
 CREATE TABLE Pokemon
@@ -126,6 +126,7 @@ CREATE TABLE Pokemon
       MinEvolveLevel INT,
       EvolveIntoID VARCHAR(4),
       EvolveTrigger VARCHAR(20),
+      BaseExp INT DEFAULT 10,
       PRIMARY KEY (PID)
 );
 
@@ -140,7 +141,6 @@ CREATE TABLE PlayerPokemon
       PID VARCHAR(4),
       IV INT DEFAULT 0,
       EV INT DEFAULT 50,
-      BaseExp INT DEFAULT 10,
       PRIMARY KEY (UID, ID),
       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
