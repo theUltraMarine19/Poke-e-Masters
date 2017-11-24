@@ -25,7 +25,7 @@
 <% 
 for(int i=0;i< Integer.parseInt(num) ;i++){
 	String id="\"gyml"+(i+1)+"\"";	
-    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><img style=\"height:100px\" src=\"./GymLeaders/front/1.png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>Santalune City</p><a class=\"btn btn-floating pulse\" href=\"#\" ><i class=\"material-icons\">arrow_forward</i></a></div></div></div></div>");
+    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><img style=\"height:100px\" src=\"./GymLeaders/front/1.png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>Santalune City</p><a class=\"battle btn btn-floating pulse\" href=\"#\" ><i class=\"material-icons\">arrow_forward</i></a></div></div></div></div>");
 }
 %>
 </div>
@@ -62,7 +62,11 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 			});
 			
 		});
-		
+		$(".battle").click(function(){
+			var select = $(this).parent("div").parent("div").attr("id");
+			alert(select);
+
+		});
 						
 	});
 </script>

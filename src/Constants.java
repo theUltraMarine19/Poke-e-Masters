@@ -13,10 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Constants {
-	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
+//	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
 //	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
 //	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
-//	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
+	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
 	public static int[] s_id = {1,4,7,152,155,158,252,255,258,387,390,393,495,498,501,650,653,656};

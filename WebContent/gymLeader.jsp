@@ -259,9 +259,7 @@ $(document).ready(function(){
 		$("#addteam").click(function(event){
 			event.preventDefault();			
 			var c = $("#addteam").siblings("#Partner").text().split(" ")[2];
-			alert(c);
 			var id = "#pokemon"+(ctr+1);
-			alert(id);
 			var c1 = $(id).children();
 			var x = ctr + 3;
 			document.getElementById("field"+x).value = c;
