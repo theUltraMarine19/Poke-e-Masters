@@ -68,7 +68,7 @@ public class Battle extends HttpServlet {
 					out.println(res);
 				}
 				else if(state.equals("item")) {
-					String res = Constants.wildUseItem(player_id,request.getParameter("uid"),request.getParameter("item_id").substring(1),request.getParameter("wildID"));					
+					String res = Constants.wildUseItem(player_id,request.getParameter("uid"),request.getParameter("item_id"),request.getParameter("wildID"));					
 					PrintWriter out = response.getWriter();
 					out.println(res);
 				}

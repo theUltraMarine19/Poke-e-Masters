@@ -191,6 +191,14 @@
     </div>
     <div id="pokemoves" class="row">	
 	</div>
+	<div id="items" style="display:none;" class="row">		
+		<div class="col s1"></div>
+		<div class="col s2"><button class="indigo white-text waves-effect item" id="1">Pokeball</button></div>
+		<div class="col s2"><button class="indigo white-text waves-effect item" id="2">Megaball</button></div>
+		<div class="col s2"><button class="indigo white-text waves-effect item" id="3">S Portion</button></div>
+		<div class="col s2"><button class="indigo white-text waves-effect item" id="4">M Portion</button></div>
+		<div class="col s2"><button class="indigo white-text waves-effect item" id="5">L Portion</button></div>		
+	</div>
 	<div class="row" >
 	<div class="col s3" >
 		<div class="card">
@@ -204,6 +212,7 @@
 					<p>Alvin</p>
 					<p>Alvin</p>
 					<p>Alvin</p>
+					<p style="display:none;">Alvin</p>					
 				</div>
 			
 		</div>
@@ -231,7 +240,7 @@
 		for(int i=0;i<player_team.length();i++){
 			JSONObject temp = player_team.getJSONObject(i);
 			String id = "pokemon"+(i+1);
-			out.println("<div class=\"col s3\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p style=\"font-size:small;\">#Partner : "+temp.getString("uid")+"</p><p style=\"font-size:small;\">Level : "+temp.getInt("level")+"</p><p style=\"font-size:small;\">HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p style=\"display:none;\">"+temp.getString("pid")+"</p></div></div></div></div>");
+			out.println("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:8px;\" class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p style=\"font-size:small;\">#Partner : "+temp.getString("uid")+"</p><p style=\"font-size:small;\">Level : "+temp.getInt("level")+"</p><p style=\"font-size:small;\">HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p style=\"display:none;\">"+temp.getString("pid")+"</p></div></div></div></div>");
 		}
 	%>
 	</div>
@@ -249,6 +258,7 @@
 		$(sp[1]).text($(pokeInfo[1]).text());
 		$(sp[2]).text($(pokeInfo[2]).text());
 		$(sp[3]).text($(pokeInfo[3]).text());
+		$(sp[4]).text($(poke).attr("id"));	
 		$("#selectedpokemon").css("visibility","visible");
 	}
 
@@ -259,7 +269,8 @@
 		    $("#panelImg").html("");
 		    $("#panelContent").html("");
 		    $("#pokemoves").html("");
-		    $("#selectedpokemon").css("visibility","hidden");
+		    $("#items").css("display","none");
+		    $("#selectedpokemon").css("visibility","hidden");		    
 		    $("#msg").html("");
 		}});
 		$("#navbar").load("navbar1.html",function(){
@@ -267,20 +278,67 @@
 			$('#cities').addClass('active');
 			$(".dropdown-button").dropdown();
 		});
+		$(".item").click(function(){
+			var uid = $("#selectedpokemon").children(".card-content").children("p").first().text().split(" ")[2];
+			var wildid = $("#oppinfo").children("p").first().text().split(" ")[2];									
+			$.post("Battle",{"type":"wild","state":"item","uid":uid,"wildID":wildid,"item_id":$(this).attr("id")},function(data){
+				res = JSON.parse(data);
+				if(res.status){
+					if(res.caught){
+						$("#pokemoves").html("");
+						$("#items").css("display","none");
+						alert("You caught the pokemon");
+					}
+					else{						
+						var pokeid = "#"+$("#selectedpokemon").children(".card-content").children("p").last().text();						
+						var userhp = $(pokeid).children(".card-content").children("p")[2];
+						var wildhp = $("#oppinfo").children("p")[2];
+						$(userhp).text("HP : "+res.UserCurrHP+"/"+res.UserHp);
+						var x = $("#selectedpokemon").children(".card-content").children("p");
+						$(x[2]).text("HP : "+res.UserCurrHP+"/"+res.UserHp);
+						$(wildhp).text("HP : "+res.WildCurrHP+"/"+res.WildHp);
+						if(res.UserCurrHP == 0 && res.WildCurrHP == 0){
+							alert("Both have fainted");
+							$("#pokemoves").html("");
+							$("#selectedpokemon").css("visibility","hidden");
+							$("#items").css("display","none");
+							$(pokeid).off("click");													
+						}
+						else if(res.UserCurrHP == 0){
+							alert("Your pokemon is unable to battle, choose another pokemon or leave");
+							$("#pokemoves").html("");
+							$("#selectedpokemon").css("visibility","hidden");
+							$("#items").css("display","none");
+							$(pokeid).off("click");
+						}
+						else if(res.WildCurrHP == 0){
+							alert("You have won");
+							$("#pokemoves").html("");
+							$("#items").css("display","none");
+						}
+					}
+					$("#msg").append("<p style:\"font-size:small\">"+res.message+"</p>")
+				}
+				else{
+					alert(res.Message);
+				}
+			}); 			
+		});
 		$.post("Profile",{"function":"Get team info"},function(data){
 			var res1 = JSON.parse(data);
-			var i2
+			var i2;
 			for(i2=0;i2<res1.length;i2++){
 				if(res1[i2].currenthp != 0){
 					var id = "#pokemon"+(i2+1);
 					$(id).click(function(){							
 						var poke = $(this);
 						fillSelectedPokemon(poke);
-						var c = $(this).children(".card-content").first().children("p");
+						var c = $(this).children(".card-content").first().children("p");						
 						$.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()},function(data){					
 							var res = JSON.parse(data);
 							$("#pokemoves").html("");
 							var i1;
+							$("#items").css("display","block");
 							for(i1=0;i1<res.length;i1++){
 								var a_id = "attack"+(i1+1);
 								$("#pokemoves").append("<div class=\"col s3\"><div class=\"card hoverable\"><div id=\""+a_id+"\" class=\"card-content\"><p style=\"font-size:12px;\">#"+res[i1].AttackID+" "+res[i1].Name+"</p><p style=\"font-size:10px;\">PP : "+res[i1].PP+"</p><p style=\"display:none\">"+res[i1].uid+"</p></div></div></div>");
@@ -311,17 +369,20 @@
 													alert("Both have fainted");
 													$("#pokemoves").html("");
 													$("#selectedpokemon").css("visibility","hidden");
+													$("#items").css("display","none");
 													$(poke).off("click");													
 												}
 												else if(res.UserCurrHP == 0){
 													alert("Your pokemon is unable to battle, choose another pokemon or leave");
 													$("#pokemoves").html("");
 													$("#selectedpokemon").css("visibility","hidden");
+													$("#items").css("display","none");
 													$(poke).off("click");
 												}
 												else if(res.WildCurrHP == 0){
 													alert("You have won");
 													$("#pokemoves").html("");
+													$("#items").css("display","none");
 												}										
 											}
 											else{
