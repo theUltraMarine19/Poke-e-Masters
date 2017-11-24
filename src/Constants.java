@@ -621,10 +621,10 @@ public class Constants {
 				temp.put("level",r.getInt(4));
 				String[] types = r.getString(7).split(",");
 				temp.put("types",types);
-				temp.put("currenthp", r.getInt(5));
 				int ev=r.getInt(8),iv=r.getInt(9),lvl=r.getInt(4);
 				int x = (int)Math.floor(((r.getInt(6)+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
 				temp.put("basehp",x);
+				temp.put("currenthp", x);
 				arr.put(temp);
 				pstmt1.setInt(1, x);
 				pstmt1.setString(2, apid);
@@ -1242,11 +1242,12 @@ public class Constants {
 			ResultSet r2 = user1MoveData.executeQuery();
 			ResultSet r3 = user2PokeData.executeQuery();
 			ResultSet r4 = user2MoveData.executeQuery();
-			
+			System.out.println("here0");
 			r1.next();
 			r2.next();
 			r3.next();
 			r4.next();
+			System.out.println("here1");
 			json.put("status", true);
 			if(attackId2.equals("0")) {
 				int temp=0;
@@ -1330,7 +1331,7 @@ public class Constants {
 					User2PokeUpdate.executeUpdate();
 					User1PokeMoveUpdate.executeUpdate();
 					json.put("User1DoneDamage", User1DoneDamage);
-					json.put("PP", r2.getInt(5)-1);
+					json.put("PP", r2.getInt(6)-1);
 					Message = Message + "\nThe "+r1.getString(10)+ " used "+r2.getString(2)+ " and caused "+Integer.toString(User1DoneDamage)+"HP damage.";
 					if(CurrHp2==0) {
 						PreparedStatement User1PokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set (Experience,Level)=(?,?) where ID=? and UID=?");
