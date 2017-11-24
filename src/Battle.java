@@ -73,6 +73,9 @@ public class Battle extends HttpServlet {
 					out.println(res);
 				}
 			}
+			else if(battleType.equals("gym")) {
+				
+			}
 		}
 	}
 

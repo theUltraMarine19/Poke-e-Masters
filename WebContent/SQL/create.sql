@@ -215,6 +215,19 @@ CREATE TABLE WildPokemonMoves
 --       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
 -- );
 
+-- CREATE TABLE CurrentBattleList
+-- (
+--       Result VARCHAR(4) NOT NULL,
+--       WinID VARCHAR(8) ,
+--       BattleTime TIMESTAMP NOT NULL,
+--       BattleID VARCHAR(20),
+--       ID1 VARCHAR(8),
+--       ID2 VARCHAR(8),
+--       PRIMARY KEY (BattleID),
+--       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
+--       FOREIGN KEY (PID) REFERENCES Pokemon(PID) ON DELETE CASCADE
+-- );
+
 CREATE TABLE PlayerPokemonMoves
 (
       ID VARCHAR(8),
