@@ -52,11 +52,12 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 	
 	$(document).ready(function(){
 		$("#navbar").load("navbar1.html",function(){
+			$("#battleGymLeaders").addClass("active");
 			$(".dropdown-button").dropdown();
 			$("#name_user").text($("#userName").text());
 			$.post("BattleGymLeaders",{"function":"Get gym info"},function(data){
 				var res = JSON.parse(data);
-				fillTeam(res);
+				fillTeam(res);				
 				$("#navbar").css({opacity:"1"});
 				$("#profile_content").animate({opacity:"1"},1000);
 			});
