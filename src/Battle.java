@@ -75,12 +75,10 @@ public class Battle extends HttpServlet {
 				}
 			}
 			else if(battleType.equals("gym")) {
-				System.out.println("Hello 1");
 				String state = request.getParameter("state");
 				if(state.equals("Battle begin")) {
 					JSONObject json=new JSONObject();					
 					String apid = request.getParameter("apid").substring(4);
-					System.out.println("Hello "+apid);
 					try {
 						json.put("player", new JSONArray(Constants.getPlayerPokemonTeamInfo(player_id)));
 						json.put("gymLeader", new JSONArray(Constants.getGymLeaderTeamInfo(apid)));
@@ -92,7 +90,7 @@ public class Battle extends HttpServlet {
 					out.println(json.toString());
 				}
 				else if(state.equals("attack")) {
-					String res = Constants.PlayerAttack(player_id,request.getParameter("uid"),request.getParameter("a_id").substring(1),request.getParameter("apid"),request.getParameter("ap_pid"),"0");
+					String res = Constants.PlayerAttack(player_id,request.getParameter("uid"),request.getParameter("a_id").substring(1),request.getParameter("apid").substring(4),request.getParameter("ap_pid"),"0");
 					PrintWriter out = response.getWriter();
 					out.println(res);
 				}

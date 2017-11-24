@@ -127,10 +127,37 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 					$(pokeInfo[2]).text($(x[2]).text());
 					$(pokeInfo[3]).text($(x[3]).text());
 					$(pokeInfo[4]).text(poketeamno);
-					/* $.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()}) */
+					$.post("Profile",{"function":"Get pokemon moves","uid":$(x[1]).text()},function(data){
+						var res = JSON.parse(data);
+						$("#pokemoves").html("");
+						var i1;						
+						for(i1=0;i1<res.length;i1++){
+							var a_id = "attack"+(i1+1);
+							$("#pokemoves").append("<div class=\"col s3\"><div class=\"card hoverable\"><div id=\""+a_id+"\" class=\"card-content\"><p style=\"font-size:12px;\">#"+res[i1].AttackID+" "+res[i1].Name+"</p><p style=\"font-size:10px;\">PP : "+res[i1].PP+"</p><p style=\"display:none\">"+res[i1].uid+"</p></div></div></div>");	
+							$("#"+a_id).click(function(){
+								var a_info = $(this).children("p");
+								var attackId = ($(a_info[0]).text()).split(" ")[0];
+								$.post("Battle",{"type":"gym","state":"attack","uid":$("#selectedpokemon").children(".card-content").children("p").first().text().split(" ")[2],"a_id":attackId,"apid":select_apid,"ap_pid":$("#opponentpokemon").children(".card-content").children("p").first().text().split(" ")[2]},function(data){
+									alert(data);
+								});
+							});
+						}
+					});
 					$("#selectedpokemon").css("visibility","visible");
 				});
 			}
+		}
+		if(rowid=="gymPokemons"){
+			var x = $("#gymPokemons_1").children(".card-content").children();
+			var poketeamno = "gymPokemons_1";
+			$("#opponentpokemon").children(".card-image").children("img").attr("src","./Pokemons/front/"+$(x[4]).text()+".png");
+			var pokeInfo = $("#opponentpokemon").children(".card-content").children();
+			$(pokeInfo[0]).children("strong").text($(x[0]).children("strong").text());
+			$(pokeInfo[1]).text($(x[1]).text());
+			$(pokeInfo[2]).text($(x[2]).text());
+			$(pokeInfo[3]).text($(x[3]).text());
+			$(pokeInfo[4]).text(poketeamno);
+			$("#opponentpokemon").css("visibility","visible");
 		}
 	}
 	

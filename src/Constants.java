@@ -1226,7 +1226,7 @@ public class Constants {
 			user1MoveData.setString(3, attackId1);
 			user1MoveData.setString(1,player_id1);
 			PreparedStatement user2MoveData;
-			PreparedStatement user2PokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,Experience,BaseExp from "+table1+" as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
+			PreparedStatement user2PokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,BaseExp from "+table1+" as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
 			if(attackId2.equals("0")) {
 				user2MoveData = conn.prepareStatement("select a.attackID, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,ppm.PP from APPlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=?");
 			}
@@ -1373,6 +1373,7 @@ public class Constants {
 		}
 		catch(Exception e){
 			System.out.println("Error : "+e);
+			e.printStackTrace();
 		}
 		return null;
 	}
