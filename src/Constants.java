@@ -16,8 +16,8 @@ import com.sun.corba.se.impl.protocol.giopmsgheaders.ReplyMessage_1_0;
 
 public class Constants {
 //	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
-	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-//	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
+//	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
+	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
 //	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
@@ -305,6 +305,9 @@ public class Constants {
 				if(flag_password){
 					if(flag_token){
 						try{
+							PreparedStatement onlineSet = conn.prepareStatement("update Player set online=1 where email=?");
+							onlineSet.setString(1, email);
+							onlineSet.executeUpdate();
 							json.put("success", true);
 							json.put("status", "succesful");
 							json.put("userid",id);
@@ -1434,7 +1437,7 @@ public class Constants {
 	
 	public static JSONArray getAllPlayersInfo(String player_id){
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement pstmt = conn.prepareStatement("select id from player where id<>? and id<>'admin'");){
+			PreparedStatement pstmt = conn.prepareStatement("select id from player where id<>? and id<>'admin' and online=1");){
 			pstmt.setString(1, player_id);
 			ResultSet r = pstmt.executeQuery();
 			JSONArray arr = new JSONArray();
@@ -1449,5 +1452,70 @@ public class Constants {
 			System.out.println("Error : "+e);
 		}
 		return null;
+	}
+	
+	public static void Logout(String player_id) {
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement onlineSet = conn.prepareStatement("update Player set online=0 where id=?")) {
+			onlineSet.setString(1, player_id);
+			onlineSet.executeUpdate();
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
+	}
+	
+	public static String SendMessage(String from, String to, String messageType, String message) {
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement onlineSet = conn.prepareStatement("insert into MessageExchange values (?,?,?,?)")) {
+			onlineSet.setString(1, from);
+			onlineSet.setString(2, to);
+			onlineSet.setString(3, messageType);
+			onlineSet.setString(4, message);
+			if(onlineSet.executeUpdate()>0) {
+				json.put("status", true);
+			}
+			else {
+				json.put("status", false);
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
+		return json.toString();
+	}
+	
+	public static String ViewChallenge(String player_id, boolean fullResponse) {
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement Challenges = conn.prepareStatement("select FromID from MessageExchange where ToId=? and MessageType='Battle Challenge");) {
+			Challenges.setString(1, player_id);
+			ResultSet challengeSet = Challenges.executeQuery();
+			if(!fullResponse) {
+				int count = 0;
+				while (challengeSet.next()) count++;
+				if(count > 0) {
+					json.put("status", true);
+					json.put("message", "You have "+Integer.toString(count)+" new challenges.");
+				}
+				else 
+					json.put("status", false);
+			}
+			else {
+				JSONArray arr = new JSONArray();
+				while(challengeSet.next()){
+					JSONObject temp = Constants.getPlayerProfileInfo(challengeSet.getString(1));
+					temp.put("player_id",challengeSet.getString(1));
+					arr.put(temp);
+				}
+				json.put("status", true);
+				json.put("challengers", arr);
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
+		return json.toString();
 	}
 }

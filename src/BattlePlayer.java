@@ -1,6 +1,7 @@
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Servlet implementation class BattlePlayer
@@ -66,7 +70,37 @@ public class BattlePlayer extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		HttpSession s = request.getSession(false);
+		if(s==null) {			
+			response.sendRedirect("Login");
+			return;
+		}
+		else {
+			if(s.getAttribute("player_id")==null) {
+				s.invalidate();		
+				response.sendRedirect("Login");
+				return;
+			}			
+		}
+		String player_id = s.getAttribute("player_id").toString();
+		if((request.getMethod()).equals("POST")){			
+			String requestType = request.getParameter("type");				
+			if(requestType.equals("challenge")){
+				String res = Constants.SendMessage(player_id,request.getParameter("challegee_id"),"Battle Challenge","I challenge you to batlle!");
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
+			else if(requestType.equals("viewSmall")) {
+				String res = Constants.ViewChallenge(player_id,false);
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
+			else if(requestType.equals("viewLarge")) {
+				String res = Constants.ViewChallenge(player_id,true);
+				PrintWriter out = response.getWriter();
+				out.println(res);
+			}
+		}
 	}
 
 }
