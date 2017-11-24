@@ -64,9 +64,13 @@ $(document).ready(function(){
 	$("#map").on('click',function(){
 	    window.location = "CreateMap";
 		});
-	$("#logout").on('click',function(){
-	    window.location = "Logout";
+
+	$("#logout").on("click", function(){
+    	$.post("Logout", function(data){
+			alert("Successfully logged out");
+			window.location.replace("Login");
 		});
+	}); 
 
 	});
 </script>
