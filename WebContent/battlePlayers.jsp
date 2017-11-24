@@ -62,7 +62,10 @@
 			$(".container").animate({opacity:"1"},1000);
 		});
 		$(".battleTrainer").click(function(){
-			alert($(this).attr("id"));
+			$.post("BattlePlayer",{"type":"challenge","challegee_id":$(this).attr("id")},function(data){
+				alert(data);
+			});
+			
 		});
 	});
 </script>

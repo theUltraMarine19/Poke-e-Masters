@@ -19,3 +19,14 @@
     </ul>
   </div>
 </nav>
+<script>
+setInterval("ChallengeDetails()",1000);
+function ChallengeDetails(){	
+	$.post("BattlePlayer",{"type":"viewSmall"},function(data){
+		var res = JSON.parse(data);
+		if(res.status){
+			$(".brand-logo").text("Pok-E-Masters "+res.message);
+		}
+	});
+}
+</script>

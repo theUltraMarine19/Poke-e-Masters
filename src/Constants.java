@@ -16,8 +16,8 @@ import com.sun.corba.se.impl.protocol.giopmsgheaders.ReplyMessage_1_0;
 
 public class Constants {
 //	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
-//	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
+	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
+//	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
 //	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
@@ -1489,7 +1489,7 @@ public class Constants {
 	public static String ViewChallenge(String player_id, boolean fullResponse) {
 		JSONObject json = new JSONObject();
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement Challenges = conn.prepareStatement("select FromID from MessageExchange where ToId=? and MessageType='Battle Challenge");) {
+			PreparedStatement Challenges = conn.prepareStatement("select FromID from MessageExchange where ToId=? and MessageType='Battle Challenge'");) {
 			Challenges.setString(1, player_id);
 			ResultSet challengeSet = Challenges.executeQuery();
 			if(!fullResponse) {
