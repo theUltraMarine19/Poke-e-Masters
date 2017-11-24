@@ -1,12 +1,12 @@
-CREATE TABLE City
-(
-      CityID VARCHAR(4),
-      BaseLevel INT DEFAULT 0,
-      CityName VARCHAR(15) NOT NULL,
-      PokeShopLocX NUMERIC(2,0) DEFAULT 50,
-      PokeShopLocY NUMERIC(2,0) DEFAULT 50,
-      PRIMARY KEY (CityID)
-);
+-- CREATE TABLE City
+-- (
+--       CityID VARCHAR(4),
+--       BaseLevel INT DEFAULT 0,
+--       CityName VARCHAR(15) NOT NULL,
+--       PokeShopLocX NUMERIC(2,0) DEFAULT 50,
+--       PokeShopLocY NUMERIC(2,0) DEFAULT 50,
+--       PRIMARY KEY (CityID)
+-- );
 
 CREATE TABLE Attack
 (
