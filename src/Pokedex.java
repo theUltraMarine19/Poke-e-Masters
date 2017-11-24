@@ -83,16 +83,17 @@ public class Pokedex extends HttpServlet {
 			}			
 		}
 		String player_id = s.getAttribute("player_id").toString();
-		if(!Constants.get_setAvatarChosen(player_id,true,0)){
-			RequestDispatcher view = request.getRequestDispatcher("selectAvatar.jsp");
-			view.forward(request, response);
-		}	
-		else if(!Constants.get_setStarterPokemon(player_id, true,0)){
-			request.setAttribute("pids", Constants.s_id);
-			RequestDispatcher view = request.getRequestDispatcher("starterPokemon.jsp");
-			view.forward(request, response);
+		if(!player_id.equals("admin")){
+			if(!Constants.get_setAvatarChosen(player_id,true,0)){
+				RequestDispatcher view = request.getRequestDispatcher("selectAvatar.jsp");
+				view.forward(request, response);
+			}	
+			else if(!Constants.get_setStarterPokemon(player_id, true,0)){
+				request.setAttribute("pids", Constants.s_id);
+				RequestDispatcher view = request.getRequestDispatcher("starterPokemon.jsp");
+				view.forward(request, response);
+			}
 		}
-		
 		if(request.getMethod().equals("POST")){
 			String pid = request.getParameter("pid");
 			if(pid != null ){

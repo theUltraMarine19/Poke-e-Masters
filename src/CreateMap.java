@@ -78,7 +78,7 @@ public class CreateMap extends HttpServlet {
 		String point = request.getParameter("points");
 		String[] points = point.split(",");
 		
-		PrintWriter out = new PrintWriter(getServletContext().getRealPath("/Maps/map.txt"));
+		PrintWriter out = new PrintWriter("/Maps/map.txt");
 		for (int i=-20;i<=480;i+=20) {
 				out.println("\'"+i+"px,-20px\',");
 				out.println("\'"+i+"px,340px\',");
@@ -100,7 +100,7 @@ public class CreateMap extends HttpServlet {
 		}
 		out.close();
 		System.out.println(point);
-		System.out.println(getServletContext().getRealPath("/Maps/map.txt"));
+		System.out.println("/Maps/map.txt");
 		
 		String[] imgs = img.split(",");
 		BufferedImage image = null;
@@ -112,8 +112,8 @@ public class CreateMap extends HttpServlet {
 		image = ImageIO.read(bis);
 		bis.close();
 
-		// write the image to a file
-		File outputfile = new File(getServletContext().getRealPath("/Maps/map.png"));
+		// write the image to a file /home/jeyasoorya/workspace/PokeEMasters/WebContent
+		File outputfile = new File("/Maps/map.png");
 		ImageIO.write(image, "png", outputfile);
 		System.out.println("done");
 

@@ -184,7 +184,7 @@ for(int i=0;i<arr.length();i++){
 <input type="hidden" name="poke3" value="NotSet" id="field5"/>
 <input type="hidden" name="poke4" value="NotSet" id="field6"/>
 <input type="hidden" name="poke5" value="NotSet" id="field7"/>
-<input type="hidden" name="poke6" value="NotSet" id="field8"//>
+<input type="hidden" name="poke6" value="NotSet" id="field8"/>
 
 <div class = "row">
 <div  class ="input-field col s2 offset-s5">
@@ -232,6 +232,7 @@ $(document).ready(function(){
 
 		$("#myTable tbody").on('click','tr',function(){
 			var c = table.row(this).data();
+			alert(c[0]);
 			$.post("Pokedex",{"pid":c[0]},function(data){
 				var res = JSON.parse(data);
 				if(res.success){
