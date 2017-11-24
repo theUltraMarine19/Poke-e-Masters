@@ -1448,27 +1448,33 @@ public class Constants {
 				json.put("img", r1.getString(4));
 				cities.put(json);
 			}
-					
-	
-	public static JSONArray getAllPlayersInfo(String player_id){
-		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement pstmt = conn.prepareStatement("select id from player where id<>? and id<>'admin' and online=1");){
-			pstmt.setString(1, player_id);
-			ResultSet r = pstmt.executeQuery();
-			JSONArray arr = new JSONArray();
-			while(r.next()){
-				JSONObject temp = Constants.getPlayerProfileInfo(r.getString(1));
-				temp.put("player_id",r.getString(1));
-				arr.put(temp);
-			}
-			return arr;
 		}
 		catch(Exception e){			
 			System.out.println("Error : "+e);
 		}
 		return cities.toString();
 	}
-
+		
+		
+	public static JSONArray getAllPlayersInfo(String player_id){
+	try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+		PreparedStatement pstmt = conn.prepareStatement("select id from player where id<>? and id<>'admin' and online=1");){
+		pstmt.setString(1, player_id);
+		ResultSet r = pstmt.executeQuery();
+		JSONArray arr = new JSONArray();
+		while(r.next()){
+			JSONObject temp = Constants.getPlayerProfileInfo(r.getString(1));
+			temp.put("player_id",r.getString(1));
+			arr.put(temp);
+		}
+			return arr;
+		}
+			catch(Exception e){			
+				System.out.println("Error : "+e);
+			}
+		return null;
+	}
+	
 	public static void AddCity(String cname, int lvl, String point, String imageBase64) {
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
 				PreparedStatement pstmt = conn.prepareStatement("insert into city values (nextval('CityID'), ?, ?, ?, decode(?,'base64'));");
@@ -1483,10 +1489,9 @@ public class Constants {
 				//out.close();
 				pstmt.executeQuery();			
 			}
-			catch(Exception e){			
+		catch(Exception e){			
 				System.out.println("Error : "+e);
 			}
-		return null;
 	}
 	
 	public static void Logout(String player_id) {
@@ -1552,6 +1557,6 @@ public class Constants {
 			System.out.println("Error : "+e);
 		}
 		return json.toString();
->>>>>>> origin/master
+
 	}
 }
