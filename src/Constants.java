@@ -12,10 +12,12 @@ import javax.mail.internet.MimeMessage;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.sun.corba.se.impl.protocol.giopmsgheaders.ReplyMessage_1_0;
+
 public class Constants {
 //	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
-	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-//	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
+//	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
+	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
 //	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
@@ -600,6 +602,42 @@ public class Constants {
 		return null;
 	}
 	
+	public static String getGymLeaderTeamInfo(String apid){
+		JSONArray arr = new JSONArray();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt1 = conn.prepareStatement("update applayerpokemon set currenthp = ? where id=? and uid=?");
+			PreparedStatement pstmt2 = conn.prepareStatement("update applayerpokemonmoves set pp = (select pp from attack where attack.attackid=applayerpokemonmoves.attackid) where id=?");
+			PreparedStatement pstmt = conn.prepareStatement("select pp.uid,p.pid,name,level,currenthp,basehp,typelist,ev,iv from pokemon p,applayerpokemon pp where p.pid=pp.pid and id=? order by uid");){
+			pstmt.setString(1, apid);
+			pstmt2.setString(1, apid);
+			pstmt2.executeUpdate();
+			ResultSet r = pstmt.executeQuery();
+			while(r.next()){
+				JSONObject temp = new JSONObject();
+				temp.put("uid",r.getString(1));
+				temp.put("pid",r.getString(2));
+				temp.put("name",r.getString(3));
+				temp.put("level",r.getInt(4));
+				String[] types = r.getString(7).split(",");
+				temp.put("types",types);
+				temp.put("currenthp", r.getInt(5));
+				int ev=r.getInt(8),iv=r.getInt(9),lvl=r.getInt(4);
+				int x = (int)Math.floor(((r.getInt(6)+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
+				temp.put("basehp",x);
+				arr.put(temp);
+				pstmt1.setInt(1, x);
+				pstmt1.setString(2, apid);
+				pstmt1.setString(3,r.getString(1));
+				pstmt1.executeUpdate();
+			}
+			return arr.toString();
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
 	public static String getPlayerPokemonStats(String uid,String player_id){
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);){
 			PreparedStatement pstmt = conn.prepareStatement("select level,currenthp,experience,iv,ev,basehp,baseattack,basespeed,basedefence,name,playerpokemon.pid,evolveintoid,minevolvelevel from playerpokemon,pokemon where playerpokemon.pid=pokemon.pid and uid=? and id=?");
@@ -980,11 +1018,15 @@ public class Constants {
 						Message = Message + "\nYour "+r1.getString(10)+ " used "+r2.getString(1)+ " and caused "+Integer.toString(UserDoneDamage)+"HP damage.";
 						if(CurrHp2==0) {
 							PreparedStatement UserPokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set (Experience,Level)=(?,?) where ID=? and UID=?");
+							PreparedStatement MoneyUpdate = conn.prepareStatement("Update Player set Money=Money+? where ID=?");
 							int experience =1 +(int) ((r1.getInt(12)*Level1/5.0)*(Math.pow((2*Level2)+10, 2.5)/Math.pow(Level1+Level2+10, 2.5)));
 							int Level11 = Level1+1;
 							int nextLevelExperience = (int) (((6/5.0)*Level11*Level11*Level11)-(15*Level11*Level11)+(100*Level11)-140);
 							Message = Message + "\nThe Wild "+r3.getString(10)+ " fainted.\nYour "+r1.getString(10)+" gained "+Integer.toString(experience)+" exp points.";
 							UserPokeExpUpdate.setInt(1, r1.getInt(11)+experience);
+							MoneyUpdate.setInt(1, experience);
+							MoneyUpdate.setString(2, player_id);
+							MoneyUpdate.executeUpdate();
 							if(nextLevelExperience<=r1.getInt(11)+experience) {
 								UserPokeExpUpdate.setInt(2, Level11);
 								Message = Message + "\nYour "+r1.getString(10)+ " has leveled up.";
@@ -1337,24 +1379,39 @@ public class Constants {
 	public static String AddItems(String player_id,int pb,int mb,int sp,int mp,int lp){
 		JSONObject json = new JSONObject();
 		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
-			PreparedStatement pstmt = conn.prepareStatement("update hasitem set count=count+? where id=? and itemid=?");){
-			pstmt.setString(2, player_id);
-			pstmt.setInt(1, pb);
-			pstmt.setString(3, "1");
-			pstmt.executeUpdate();
-			pstmt.setInt(1, mb);
-			pstmt.setString(3, "2");
-			pstmt.executeUpdate();
-			pstmt.setInt(1, sp);
-			pstmt.setString(3, "3");
-			pstmt.executeUpdate();
-			pstmt.setInt(1, mp);
-			pstmt.setString(3, "4");
-			pstmt.executeUpdate();
-			pstmt.setInt(1, lp);
-			pstmt.setString(3, "5");
-			pstmt.executeUpdate();			
-			json.put("success",true);
+			PreparedStatement pstmt = conn.prepareStatement("update hasitem set count=count+? where id=? and itemid=?");
+			PreparedStatement pstmt1 = conn.prepareStatement("select money from player where id=?");
+			PreparedStatement pstmt2 = conn.prepareStatement("update player set money=money-? where id=?");){
+			pstmt1.setString(1, player_id);
+			ResultSet r1 = pstmt1.executeQuery();
+			r1.next();
+			if(pb*100+mb*500+sp*100+mp*200+lp*500<r1.getInt(1)) { 
+				pstmt.setString(2, player_id);
+				pstmt.setInt(1, pb);
+				pstmt.setString(3, "1");
+				pstmt.executeUpdate();
+				pstmt.setInt(1, mb);
+				pstmt.setString(3, "2");
+				pstmt.executeUpdate();
+				pstmt.setInt(1, sp);
+				pstmt.setString(3, "3");
+				pstmt.executeUpdate();
+				pstmt.setInt(1, mp);
+				pstmt.setString(3, "4");
+				pstmt.executeUpdate();
+				pstmt.setInt(1, lp);
+				pstmt.setString(3, "5");
+				pstmt.executeUpdate();	
+				pstmt2.setInt(1, pb*100+mb*500+sp*100+mp*200+lp*500);
+				pstmt2.setString(2, player_id);
+				pstmt2.executeUpdate();
+				json.put("success",true);
+				json.put("message", "Purchased Successfully");
+			}
+			else {
+				json.put("status", false);
+				json.put("message", "Insufficient Funds. \n Price List : \n Pokeball = 100units \n Megabll = 500units \n SmallPotion = 100 units \n MediumPotion = 200 units \n LargePotion = 500 units \n!");
+			}
 			return json.toString();
 		}
 		catch(Exception e){			

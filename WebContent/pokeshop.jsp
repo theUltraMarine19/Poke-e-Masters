@@ -80,9 +80,10 @@
 				var res = JSON.parse(data);
 				if(res.success){
 					location.reload();
+					alert(res.message);
 				}
 				else{
-					alert("Failed try again");
+					alert(res.message);
 				}
 			});
 		});

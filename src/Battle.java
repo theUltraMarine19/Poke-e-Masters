@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
 /**
  * Servlet implementation class Battle
  */
@@ -74,7 +75,25 @@ public class Battle extends HttpServlet {
 				}
 			}
 			else if(battleType.equals("gym")) {
-				
+				String state = request.getParameter("state");
+				if(state.equals("Battle begin")) {
+					JSONObject json=null;
+					String apid = request.getParameter("apid");
+					try {
+						json.put("player", new JSONArray(Constants.getPlayerPokemonTeamInfo(player_id)));
+						json.put("gymLeader", new JSONArray(Constants.getGymLeaderTeamInfo(apid)));
+					}
+					catch(Exception e) {
+						System.out.println("Error : "+e);
+					}
+					PrintWriter out = response.getWriter();
+					out.println(json.toString());
+				}
+				else if(state.equals("attack")) {
+					String res = Constants.PlayerAttack(player_id,request.getParameter("uid"),request.getParameter("a_id").substring(1),request.getParameter("apid"),request.getParameter("ap_pid"),"0");
+					PrintWriter out = response.getWriter();
+					out.println(res);
+				}
 			}
 		}
 	}
