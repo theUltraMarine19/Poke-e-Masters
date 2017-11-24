@@ -15,13 +15,16 @@
 <p style="display:none;" id="userName" >${name}</p>
 <div id="navbar" style="opacity:0;" ></div>
 <div class="container" style="opacity:0;" >
+<div class="row" >
+<div class="col s3" ></div>
+<div class="col s9" >
 <ul class="collection">
 <% 
 	JSONArray arr = (JSONArray)request.getAttribute("players");
 	for(int i=0;i<arr.length();i++){
 		JSONObject temp = arr.getJSONObject(i);
 		out.println("<li class=\"collection-item\" >");
-		out.println("<div class=\"row\"> <div class=\"col s2 offset-s5\"> <div class=\"card\" > <div class=\"card-image\" > <center><img style=\"height:3cm;width:3cm;\" src=\""+temp.getString("avatar")+"\" ></center> </div> <div class=\"card-content\" > <h6 class=\"indigo-text center\"><strong>"+temp.getString("nickname")+"</strong></h6> </div> </div> </div> </div>");
+		out.println("<div class=\"row\"> <div class=\"col s2 offset-s5\"> <div class=\"card\" > <div class=\"card-image\" > <center><img style=\"height:2cm;width:2cm;\" src=\""+temp.getString("avatar")+"\" ></center> </div> <div class=\"card-content\" > <h6 class=\"indigo-text center\"><strong>"+temp.getString("nickname")+"</strong></h6> </div> </div> </div> </div>");
 		out.println("<div class=\"row\">");
 		JSONArray t1 = (JSONArray)temp.get("pokemons_caught");
 		for(int j=0;j<t1.length();j++){
@@ -33,18 +36,20 @@
 				out.println("<center><img style=\"height:2cm;width:2cm;\" src=\"./Pokemons/front/"+t2.getString("pid")+".png\"></center>");
 				out.println("</div>");
 				out.println("<div class=\"card-content\">");
-				out.println("<h6 class=\"center indigo-text\"><strong>"+t2.getString("name")+"<br>L"+t2.getInt("level")+" </strong></h6>");
+				out.println("<h6 style=\"font-size:10px\" class=\"center indigo-text\"><strong>"+t2.getString("name")+"<br>L"+t2.getInt("level")+" </strong></h6>");
 				out.println("</div>");
 				out.println("</div>");
 				out.println("</div>");	
 			}
 		}
 		out.println("</div>");
-		out.println("<p class=\"center\" ><button id=\""+temp.getString("player_id")+"\" class=\"battleTrainer waves-effect waves-light btn\" >Battle this trainer</button></p>");
+		out.println("<p class=\"center\" ><button id=\""+temp.getString("player_id")+"\" class=\"indigo battleTrainer waves-effect waves-light btn\" >Battle this trainer</button></p>");
 		out.println("</li>");
 	}
 %>
 </ul>
+</div>
+</div>
 </div>
 </body>
 <script type="text/javascript">

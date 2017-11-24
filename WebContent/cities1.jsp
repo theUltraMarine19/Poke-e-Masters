@@ -182,7 +182,7 @@
 </div>
 </div>
 </div>
-  <div id="modal1" class="modal">
+  <div style="max-height: 100% !important; width:70% !important;" id="modal1" class="modal">
     <div class="modal-content">
     <div class="row">
     <div class="col s2 offset-s5" >
@@ -240,7 +240,7 @@
 		for(int i=0;i<player_team.length();i++){
 			JSONObject temp = player_team.getJSONObject(i);
 			String id = "pokemon"+(i+1);
-			out.println("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:8px;\" class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p style=\"font-size:small;\">#Partner : "+temp.getString("uid")+"</p><p style=\"font-size:small;\">Level : "+temp.getInt("level")+"</p><p style=\"font-size:small;\">HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p style=\"display:none;\">"+temp.getString("pid")+"</p></div></div></div></div>");
+			out.println("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+temp.getString("pid")+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:15px;\" class=\"indigo-text\" ><strong>"+temp.getString("name")+"</strong></h6><p style=\"font-size:small;\">#Partner : "+temp.getString("uid")+"</p><p style=\"font-size:small;\">Level : "+temp.getInt("level")+"</p><p style=\"font-size:small;\">HP : "+temp.getInt("currenthp")+"/"+temp.getInt("basehp")+"</p><p style=\"display:none;\">"+temp.getString("pid")+"</p></div></div></div></div>");
 		}
 	%>
 	</div>

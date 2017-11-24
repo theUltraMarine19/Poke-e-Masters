@@ -25,11 +25,11 @@
 <% 
 for(int i=0;i< Integer.parseInt(num) ;i++){
 	String id="\"gyml"+(i+1)+"\"";	
-    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><img style=\"height:100px\" src=\"./GymLeaders/1.png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>Santalune City</p><div class=\"divider\"></div><a class=\"battle\" href=\"#\" >Fight</a></div></div></div></div>");
+    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><center><img style=\"height:3cm;width:2cm;\" src=\"./GymLeaders/1.png\"></center></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>Santalune City</p><div class=\"divider\"></div><a class=\"battle\" href=\"#\" >Fight</a></div></div></div></div>");
 }
 %>
 </div>
-  <div id="modal1" class="modal">
+  <div style="max-height: 100% !important; width:70% !important;" id="modal1" class="modal">
     <div class="modal-content">
     <div class="row">
     <div class="col s2 offset-s5" >
@@ -101,7 +101,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 		for(i=0;i<res.length;i++){
 			var id = "#gyml"+(i+1);			
 			var c1 = $(id).children();
-			$(c1[0]).children("img").attr("src","./GymLeaders/"+res[i].avatar+".png")
+			$(c1[0]).children("center").children("img").attr("src","./GymLeaders/"+res[i].avatar+".png")
 			var c2 = $(c1[1]).children();
 			$(c2[0]).children("strong").text(res[i].name);
 			$(c2[1]).text(res[i].city);
@@ -114,7 +114,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 		var i;
 		for(i=0;i<res.length;i++){
 			var id = rowid +"_"+(i+1); 
-			$("#"+rowid).append("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+res[i].pid+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:8px;\" class=\"indigo-text\" ><strong>"+res[i].name+"</strong></h6><p style=\"font-size:small;\">#Partner : "+res[i].uid+"</p><p style=\"font-size:small;\">Level : "+res[i].level+"</p><p style=\"font-size:small;\">HP : "+res[i].currenthp+"/"+res[i].basehp+"</p><p style=\"display:none;\">"+res[i].pid+"</p></div></div></div></div>");
+			$("#"+rowid).append("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+res[i].pid+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:15px;\" class=\"indigo-text\" ><strong>"+res[i].name+"</strong></h6><p style=\"font-size:small;\">#Partner : "+res[i].uid+"</p><p style=\"font-size:small;\">Level : "+res[i].level+"</p><p style=\"font-size:small;\">HP : "+res[i].currenthp+"/"+res[i].basehp+"</p><p style=\"display:none;\">"+res[i].pid+"</p></div></div></div></div>");
 			if(rowid=="playerTeam"&&res[i].currenthp!=0){				
 				$("#"+id).click(function(){
 					var x = $(this).children(".card-content").children();

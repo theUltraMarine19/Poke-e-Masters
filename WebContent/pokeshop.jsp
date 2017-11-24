@@ -48,7 +48,7 @@
 	</div>	
 </div>
 <br>
-<p class="center"><a id="sub" class="indigo waves-effect waves-light btn">Submit</a></p>
+<p class="center"><a id="sub" class="indigo waves-effect waves-light btn">Buy Items</a></p>
 </div>
 </body>
 <script type="text/javascript">

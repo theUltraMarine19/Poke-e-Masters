@@ -30,7 +30,7 @@ for(int i=0;i<6;i++){
 </div>
 <div class="row" >
 <div class="col s3 offset-s9">
-<a id="heal" class="waves-effect waves-light btn">Heal my team</a>
+<a id="heal" class="indigo waves-effect waves-light btn">Heal my team</a>
 </div>
 </div>
 <div class="row" >

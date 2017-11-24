@@ -57,7 +57,8 @@ for(int i=0;i<arr.length();i++){
       <p id="BaseSpeed">Alvin</p>
       <p id="BaseDefence">Alvin</p>
       <p id="Types">Alvin</p>
-    
+      <p id="Evolveid">Alvin</p>
+      <p id="Evolvelevel">Alvin</p>
     </div>
     <div id="pokeAttacks" class="col s4">
     <h6 class="indigo-text" ><strong>Available Attacks</strong></h6>
@@ -75,7 +76,7 @@ for(int i=0;i<arr.length();i++){
 			$("#name_user").text($("#userName").text());
 			$('#pokedex').addClass('active');
 			$("#navbar").css({opacity:"1"});
-			$(".container").animate({opacity:"1"},1500);
+			$(".container").animate({opacity:"1"},1000);
 		});
 		var table = $('#myTable').DataTable({"lengthChange":false});
 		$("#myTable tbody").on('click','tr',function(){
@@ -90,6 +91,14 @@ for(int i=0;i<arr.length();i++){
 					$("#BaseSpeed").text("BaseSpeed : " + res.BaseSpeed);
 					$("#BaseDefence").text("BaseDefence : " + res.BaseDefence);
 					$("#Types").text("Type : " + res.Types);
+					if(res.MinEvolveLevel!="0"){
+						$("#Evolveid").text("Evolves Into : #"+res.EvolveIntoID);
+						$("#Evolvelevel").text("Evolution level : "+res.MinEvolveLevel);
+					}
+					else{
+						$("#Evolveid").text("Evolves Into : None");
+						$("#Evolvelevel").text("");
+					}				
 					var attacks = res.Attacks;
 					var i;
 					$("#pokeAttacks").html("<h6 class=\"indigo-text\"><strong>Available Attacks</strong></h6>");

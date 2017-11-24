@@ -555,6 +555,15 @@ public class Constants {
 				json.put("BaseSpeed",r.getInt(5));
 				json.put("BaseDefence",r.getInt(6));
 				json.put("Types",r.getString(8));
+				r.getInt(10);
+				if(r.wasNull()){
+					json.put("MinEvolveLevel",0);
+					json.put("EvolveIntoID","None");
+				}
+				else{
+					json.put("MinEvolveLevel",r.getInt(10));
+					json.put("EvolveIntoID",r.getString(11));
+				}				
 			}
 			PreparedStatement pstmt1 = conn.prepareStatement("select hasattack.attackid,attack.name from attack,hasattack where hasattack.attackid=attack.attackid and hasattack.pid=?");
 			pstmt1.setString(1, pid);

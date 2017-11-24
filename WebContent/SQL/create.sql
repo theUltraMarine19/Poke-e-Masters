@@ -86,10 +86,9 @@ CREATE TABLE HasItem
 -- CREATE TABLE HasWonBadge
 -- (
 --       ID VARCHAR(8),
---       GymID VARCHAR(4),
---       PRIMARY KEY (ID, GymID),
---       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE,
---       FOREIGN KEY (GymID) REFERENCES Gym(GymID) ON DELETE CASCADE
+--       Badge INT,
+--       PRIMARY KEY (ID, Badge),
+--       FOREIGN KEY (ID) REFERENCES Player(ID) ON DELETE CASCADE
 -- );
 
 -- CREATE TABLE GymBattleHist
