@@ -35,7 +35,7 @@ ul li {
 </div>
 <div class="row">
 <div class="col s4 offset-s1" >
-<a class="waves-effect waves-light btn" id = "map"><i class="material-icons right">edit</i>Add new Map</a>
+<a class="waves-effect waves-light btn" id = "map"><i class="material-icons right">edit</i>Modify Map</a>
 </div>
 </div>
 <div class="row">
@@ -48,6 +48,7 @@ ul li {
 <script>
 $(document).ready(function(){
 	$(".container").animate({opacity:"1"},1500);
+
 	$("#gym").click(function(){
 		$.post("Admin",{"function":"selection","choice":"gymLeader"},function(data){
 			var res = JSON.parse(data);
@@ -57,13 +58,20 @@ $(document).ready(function(){
 			else{
 				alert("Sorry, something went wrong try again");
 			}
+
 		});
+	});
+	$("#map").on('click',function(){
+	    window.location = "CreateMap";
 		});
-	// $("#logout").click(function()){
-	// 	$.post("Logout", function(data){
-	// 		alert("Successfully logged out");
-	// 	});
-	// });
+
+	$("#logout").on("click", function(){
+    	$.post("Logout", function(data){
+			alert("Successfully logged out");
+			window.location.replace("Login");
+		});
+	}); 
+
 	});
 </script>
 </html>
