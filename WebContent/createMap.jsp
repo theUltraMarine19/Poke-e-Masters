@@ -36,8 +36,9 @@
 </style>
 <script>
 	$(document).ready(function(){
-		$('.modal').modal();
 		var i;
+		var CityNameVar;
+		var BaseLevelVar;
 		var currObs="";
 		var NotAllowed = [];
 		for(i=1;i<4;i++){
@@ -57,23 +58,25 @@
 			else if (src.indexOf("obs") !== -1)	{
 				var src1 = $(this).children("p").children("img").attr("id");
 				currObs = src1;
-				alert(currObs);
 			}
 		});
-		$("#btnSave").on('click',function() { 
-			alert("clicked");
+		$("#CityForm").on('submit',function() { 
+			var screenshot;
 	        html2canvas($("#cont"), {
 	            onrendered: function(canvas) {
-	            	var screenshot = canvas.toDataURL("image/png");
-	            	$.ajax({
-	            		  type: "POST",
-	            		  url: "CreateMap",
-	            		  data: { 
-	            		     imgBase64: screenshot,
-	            		     points: NotAllowed.toString(),
-	            		     name: "hari"
-	            		  }
-	            		})
+	            	screenshot = canvas.toDataURL("image/png");
+	            	CityNameVar = $('#CityForm').find('input[name="city_name"]').val();
+	     	        BaseLevelVar = $('#CityForm').find('input[name="base_level"]').val();
+	     	        $.ajax({
+	           		  type: "POST",
+	           		  url: "CreateMap",
+	           		  data: { 
+	           		     imgBase64: screenshot,
+	           		     points: NotAllowed.toString(),
+	           		     cityName: CityNameVar,
+	           		     baseLevel: BaseLevelVar
+	           		  }
+	           		});
 	            },
 	            width: 920,
 	            height: 920
@@ -89,16 +92,16 @@
 				if (e.ctrlKey)
 				{
 					$("#"+x+"-"+y).remove();
-					var index = NotAllowed.indexOf(x+'px,'+y+'px');
+					var index = NotAllowed.indexOf(x+','+y);
 					if (index > -1) {
 					    NotAllowed.splice(index, 1);
 					}
 				}
 				else
 				{
-					var index = NotAllowed.indexOf(x+"px,"+y+"px");
+					var index = NotAllowed.indexOf(x+","+y);
 					if (index == -1) {   
-					NotAllowed.push(x+"px,"+y+"px");
+					NotAllowed.push(x+","+y);
 					$("#"+x+"-"+y).remove();
 					$("#cont").append("<img src=\"./Obstacles/"+currObs+".png\" style=\"position:absolute; height:20px; width:20px; left:"+x+"px; top:"+y+"px;\" id=\""+x+"-"+y+"\">");
 					
@@ -110,14 +113,13 @@
 				if (e.ctrlKey)
 				{
 					$("#"+x+"-"+y).remove();
-					var index = NotAllowed.indexOf(x+"px,"+y+"px");
+					var index = NotAllowed.indexOf(x+","+y);
 					if (index > -1) {
 					    NotAllowed.splice(index, 1);
 					}
 				}
 			}
-		//$("#p1").html("");
-			//$("#p1").append(NotAllowed);
+
 		});
 		
 	});
@@ -128,10 +130,10 @@
 <div class="container">
 <div class="row" >
 <div class="col s4 offset-s4" >
-<h4 class="indigo-text" >Modify the city</h4>
+<h4 class="indigo-text" >Create your city</h4>
 </div>
 </div>
-
+<form id="CityForm">
 <div class ="row" >
 <div class="input-field col s6">
 <input id = "city_name" name="city_name" type = "text" class="validate" required>
@@ -146,11 +148,11 @@
 
 <div class="row" id="backgrounds">
 </div>
-
+<button type="submit" value="submit">Save Map</button> 
 <div class="row" > 
 <div class="col s8" >
 <div id="cont">
-	<img src="./Obstacles/obs4.png" style="position:absolute; height:20px; width:20px; left:0px; top:0px;" id="0-0">
+	
 </div>
 </div>
 <div class="col s2" >
@@ -187,7 +189,8 @@
 </div>
 </div>
 
-<input type="button" id="btnSave" value="Save Map"/>
+
+</form>
 </div>
 <p id="p1"></p>
 

@@ -88,6 +88,8 @@ public class Profile extends HttpServlet {
 			request.setAttribute("pids", Constants.s_id);
 			RequestDispatcher view = request.getRequestDispatcher("starterPokemon.jsp");
 			view.forward(request, response);
+			
+			
 		}
 		else if(request.getMethod().equals("POST")){
 			String function = request.getParameter("function");

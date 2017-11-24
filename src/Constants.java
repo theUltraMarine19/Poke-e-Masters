@@ -1,3 +1,7 @@
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,13 +14,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.sun.corba.se.impl.protocol.giopmsgheaders.ReplyMessage_1_0;
 
 public class Constants {
-//	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
-	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
+	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
+//	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
 //	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
 //	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
@@ -1419,5 +1424,49 @@ public class Constants {
 			System.out.println("Error : "+e);
 		}
 		return null;
+	}
+	public static String GetCities(){
+		JSONArray cities = new JSONArray();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select BaseLevel, CityName, NotAllowed, encode(Image,'base64') from city;");
+			) {
+			ResultSet r1 = pstmt.executeQuery();
+			while(r1.next()) {
+				JSONObject json = new JSONObject();
+				//System.out.println(r1.getInt("BaseLevel"));
+				//System.out.println(r1.getString("CityName"));
+				//System.out.println(r1.getString("NotAllowed"));
+				//System.out.println(r1.getString(4));
+				json.put("BaseLevel", r1.getInt("BaseLevel"));
+				json.put("CityName", r1.getString("CityName"));
+				json.put("NotAllowed", r1.getString("NotAllowed"));
+				json.put("img", r1.getString(4));
+				cities.put(json);
+			}
+					
+		}
+		catch(Exception e){			
+			System.out.println("Error : "+e);
+		}
+		return cities.toString();
+	}
+
+	public static void AddCity(String cname, int lvl, String point, String imageBase64) {
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+				PreparedStatement pstmt = conn.prepareStatement("insert into city values (nextval('CityID'), ?, ?, ?, decode(?,'base64'));");
+				) {
+				pstmt.setInt(1, lvl);
+				pstmt.setString(2, cname);
+				pstmt.setString(3, point);
+				pstmt.setString(4, imageBase64);
+				
+				//PrintWriter out = new PrintWriter("city1.txt");
+				//out.println(pstmt);
+				//out.close();
+				pstmt.executeQuery();			
+			}
+			catch(Exception e){			
+				System.out.println("Error : "+e);
+			}
 	}
 }

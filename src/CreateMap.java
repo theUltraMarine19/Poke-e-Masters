@@ -74,35 +74,49 @@ public class CreateMap extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
 		String img = request.getParameter("imgBase64");
 		String point = request.getParameter("points");
-		String[] points = point.split(",");
+		String cname = request.getParameter("cityName");
+		int lvl = Integer.parseInt(request.getParameter("baseLevel"));
+
+		System.out.println(img);
+		System.out.println(cname);
+		System.out.println(lvl);
+		System.out.println(point);
 		
-		PrintWriter out = new PrintWriter("/Maps/map.txt");
+		
+		//PrintWriter out = new PrintWriter("/Maps/map.txt");
 		for (int i=-20;i<=480;i+=20) {
-				out.println("\'"+i+"px,-20px\',");
-				out.println("\'"+i+"px,340px\',");
+				point = point + "," + i + ",-20";
+				point = point + "," + i + ",340";
+				//out.println("\'"+i+",-20\',");
+				//out.println("\'"+i+",340\',");
 		}
 		for (int j=-20;j<=340;j+=20) {
-				out.println("\'-20px,"+j+"px\',");
-				out.println("\'480px,"+j+"px\',");
+				point = point + ",-20" + "," + j;
+				point = point + ",480" + "," + j;
+				//out.println("\'-20,"+j+"\',");
+				//out.println("\'480,"+j+"\',");
 		}
-		
+		System.out.println(point);
+		String[] points = point.split(",");
+
 		for (int i=0;i<points.length-1;i+=2) {
 			if (i!=points.length-2)
 			{
-				out.println("\'"+points[i]+","+points[i+1]+"\',");
+				//out.println("\'"+points[i]+","+points[i+1]+"\',");
 			}
 			else
 			{
-				out.println("\'"+points[i]+","+points[i+1]+"\'");
+				//out.println("\'"+points[i]+","+points[i+1]+"\'");
 			}
 		}
-		out.close();
-		System.out.println(point);
-		System.out.println("/Maps/map.txt");
-		
+		//out.close();
 		String[] imgs = img.split(",");
+		Constants.AddCity(cname, lvl, point, imgs[1]);
+		
+		/*
 		BufferedImage image = null;
 		byte[] imageByte;
 
@@ -114,9 +128,9 @@ public class CreateMap extends HttpServlet {
 
 		// write the image to a file /home/jeyasoorya/workspace/PokeEMasters/WebContent
 		File outputfile = new File("/Maps/map.png");
-		ImageIO.write(image, "png", outputfile);
+		ImageIO.write(image, "png", outputfile);*/
 		System.out.println("done");
-
+		
 	}
 
 }

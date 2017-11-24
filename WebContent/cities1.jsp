@@ -40,110 +40,7 @@
 
 
 
-	<script type="text/javascript">
-		var size = 20;
-		var dummy = 0;
-		<%
-		InputStream input = getServletContext().getResourceAsStream("./Maps/map.txt");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
 
-        StringBuilder sb = new StringBuilder();
-        String line;
-
-        while((line = reader.readLine())!= null){
-            sb.append(line+"\n");
-        }
-        reader.close();
-		out.println("var notAllowed = [" + sb.toString() + "];");
-		%>
-		var numSteps = 0;
-		$(document).keydown(function(e)
-		{
-			var currX = $("#img2").css("left");
-			var currY = $("#img2").css("top");
-		    switch(e.which)
-		    {
-		        case 37: // left
-		        var nextX = (parseInt(currX.replace(/px/,""))-size)+"px";
-		        if (notAllowed.indexOf(nextX+","+currY) <= -1)
-		        {
-		        	$("#img2").css("left", nextX);
-		        }
-		        numSteps++;
-		        break;
-
-		        case 39: // right
-		        var nextX = (parseInt(currX.replace(/px/,""))+size)+"px";
-		        if (notAllowed.indexOf(nextX+","+currY) <= -1)
-		        {
-		        	$("#img2").css("left", nextX);
-		        }
-		        numSteps++;		        
-		        break;
-
-		        case 38: // up
-		        var nextY = (parseInt(currY.replace(/px/,""))-size)+"px";
-		        if (notAllowed.indexOf(currX+","+nextY) <= -1)
-		        {
-		        	$("#img2").css("top", nextY);
-		        }
-		        numSteps++;
-		        break;
-
-		        case 40: // down
-		        var nextY = (parseInt(currY.replace(/px/,""))+size)+"px";
-		        if (notAllowed.indexOf(currX+","+nextY) <= -1)
-		        {
-		        	$("#img2").css("top", nextY);
-		        }
-		        numSteps++;
-		        break;
-
-		        case 69: //e - print curr position
-		        dummy = (dummy+1)%2;
-		        break;
-
-		        default: return; // exit this handler for other keys
-		    }
-		    if (numSteps == 10)
-		    {
-		    	numSteps = 0;
-		    }
-		    $("#panel").hide();
-		    $("#panelImg").html("");
-		    $("#panelContent").html("");
-		    if (Math.floor((Math.random() * 10) + 1) < numSteps)
-		    {
-		    	var wildId = (Math.floor(Math.random() * 800) + 1);
-		    	var wildLvl = (Math.floor(Math.random()*10)+5);
-		    	$("#panel").show();
-				$("#panelImg").append("<img src=\"./Pokemons/front/"+wildId+".png\" id=\"imgWild\">\n");
-		    	$("#panelContent").append("<p>Wild Pokemon appeared!!!<\p><p>Level : "+wildLvl+"</p><br>");
-		    	$("#panelContent").append("<form id=\"BattleForm\"><input type=\"hidden\" name=\"wildId\" value=\""+wildId+"\"><imput type=\"hidden\" name=\"wildLvl\" value=\""+wildLvl+"\"><input type=\"submit\" value=\"Battle\"></form>");
-				$("#BattleForm").submit(function(){
-					var details = $(this).serialize();
-					var wildPoke = $(this).children("input");
-					$("#img4").attr({"src":"./Pokemons/front/"+$(wildPoke[0]).val()+".png","alt":"No Image"});
-				    $.post("Battle",{"type":"wild","state":"begin","WildPID":$(wildPoke[0]).val(),"Level":wildLvl},function(data){
-						var res = JSON.parse(data);
-				    	$("#oppimage").attr("src","./Pokemons/front/"+$(wildPoke[0]).val()+".png");
-				    	$("#oppinfo").html("<h6 class=\"indigo-text\"><strong>"+res.name+"</strong></h6><p>#wildID : "+res.wildID+"</p><p>Level : "+res.Level+"</p><p>HP : "+res.currHP+"/"+res.currHP+"</p>");
-						$("#modal1").modal("open");
-					});	 	 	
-					$("#modal1").modal("open");
-					return false;
-				});
-		    }
-
-		    if (dummy == 1)
-		    {
-		    	var currX = $("#img2").css("left");
-		    	var currY = $("#img2").css("top");
-		    	$("#p1").html("'"+currX+","+currY+"',<br>");
-		    }
-		    e.preventDefault(); // prevent the default action (scroll / move caret)
-		});
-	</script>
 <style type="text/css">
 #cont {
     position:relative;
@@ -166,13 +63,19 @@
 
 <p style="display:none;" id="userName" >${name}</p>
 <div id="navbar"></div>
-	<div id="cont">
-		<img src="./Avatars/mini/1.png" id="img2">
-	</div>
+<!--  <div id="cont">
+	<img src="./Avatars/mini/1.png" id="img2">
+</div> -->
 <div class="container" >
+<div class="row" ></div>
+
+<div id="maps">
+
+</div>
+
 <div class="row" >
 <div class="col s6" ></div>
-<div class="col s2" >
+<!-- <div class="col s2" >
 	<div class="card" style="display:none;margin-top: 70px;" id="panel">
         <div class="card-image" id="panelImg">
         </div>
@@ -180,6 +83,7 @@
         </div>
 	</div>
 </div>
+-->
 </div>
 </div>
   <div id="modal1" class="modal">
@@ -247,8 +151,27 @@
     </div>
   </div>
 </body>
-<script type="text/javascript">
-	
+	<script type="text/javascript">
+		var size = 20;
+		var dummy = 0;
+		var currCity = '1';
+		//var notAllowed = [];
+		<%
+		InputStream input = getServletContext().getResourceAsStream("./Maps/map.txt");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        while((line = reader.readLine())!= null){
+            sb.append(line+"\n");
+        }
+        reader.close();
+		out.println("var notAllowed = [" + sb.toString() + "];");
+		%>
+		var numSteps = 0;
+		
+
 	function fillSelectedPokemon(poke){
 		var imgSrc = $(poke).children(".card-image").children("img").attr("src");
 		$("#selectedpokemon").children(".card-image").children("img").attr("src",imgSrc);
@@ -263,6 +186,130 @@
 	}
 
 	$(document).ready(function(){
+		$(document).keydown(function(e)
+			{
+		var currX = $("#img2").css("left");
+		var currY = $("#img2").css("top");
+	    switch(e.which)
+	    {
+	        case 37: // left
+	        var nextX = (parseInt(currX.replace(/px/,""))-size)+"px";
+	        if (notAllowed.indexOf(nextX+","+currY) <= -1)
+	        {
+	        	$("#img2").css("left", nextX);
+	        }
+	        numSteps++;
+	        break;
+
+	        case 39: // right
+	        var nextX = (parseInt(currX.replace(/px/,""))+size)+"px";
+	        if (notAllowed.indexOf(nextX+","+currY) <= -1)
+	        {
+	        	$("#img2").css("left", nextX);
+	        }
+	        numSteps++;		        
+	        break;
+
+	        case 38: // up
+	        var nextY = (parseInt(currY.replace(/px/,""))-size)+"px";
+	        if (notAllowed.indexOf(currX+","+nextY) <= -1)
+	        {
+	        	$("#img2").css("top", nextY);
+	        }
+	        numSteps++;
+	        break;
+
+	        case 40: // down
+	        var nextY = (parseInt(currY.replace(/px/,""))+size)+"px";
+	        if (notAllowed.indexOf(currX+","+nextY) <= -1)
+	        {
+	        	$("#img2").css("top", nextY);
+	        }
+	        numSteps++;
+	        break;
+
+	        case 69: //e - print curr position
+	        dummy = (dummy+1)%2;
+	        break;
+
+	        default: return; // exit this handler for other keys
+	    }
+	    if (numSteps == 10)
+	    {
+	    	numSteps = 0;
+	    }
+	    $("#panel").hide();
+	    $("#panelImg").html("");
+	    $("#panelContent").html("");
+	    if (Math.floor((Math.random() * 10) + 1) < numSteps)
+	    {
+	    	var wildId = (Math.floor(Math.random() * 800) + 1);
+	    	var wildLvl = (Math.floor(Math.random()*10)+5);
+	    	$("#panel").show();
+			$("#panelImg").append("<img src=\"./Pokemons/front/"+wildId+".png\" id=\"imgWild\">\n");
+	    	$("#panelContent").append("<p>Wild Pokemon appeared!!!<\p><p>Level : "+wildLvl+"</p><br>");
+	    	$("#panelContent").append("<form id=\"BattleForm\"><input type=\"hidden\" name=\"wildId\" value=\""+wildId+"\"><imput type=\"hidden\" name=\"wildLvl\" value=\""+wildLvl+"\"><input type=\"submit\" value=\"Battle\"></form>");
+			$("#BattleForm").submit(function(){
+				var details = $(this).serialize();
+				var wildPoke = $(this).children("input");
+				$("#img4").attr({"src":"./Pokemons/front/"+$(wildPoke[0]).val()+".png","alt":"No Image"});
+			    $.post("Battle",{"type":"wild","state":"begin","WildPID":$(wildPoke[0]).val(),"Level":wildLvl},function(data){
+					var res = JSON.parse(data);
+			    	$("#oppimage").attr("src","./Pokemons/front/"+$(wildPoke[0]).val()+".png");
+			    	$("#oppinfo").html("<h6 class=\"indigo-text\"><strong>"+res.name+"</strong></h6><p>#wildID : "+res.wildID+"</p><p>Level : "+res.Level+"</p><p>HP : "+res.currHP+"/"+res.currHP+"</p>");
+					$("#modal1").modal("open");
+				});	 	 	
+				$("#modal1").modal("open");
+				return false;
+			});
+	    }
+
+	    if (dummy == 1)
+	    {
+	    	var currX = $("#img2").css("left");
+	    	var currY = $("#img2").css("top");
+	    	$("#p1").html("'"+currX+","+currY+"',<br>");
+	    }
+	    e.preventDefault(); // prevent the default action (scroll / move caret)
+	});
+
+		$.post("Cities",{"function":"Get cities"},function(data){
+			var res = JSON.parse(data);
+			
+			//alert(res[4]["img"]);
+			//$("#mapImg1").css("background-image":"url(data:image/png;base64,"+res[4]["img"]+")");
+			for (let i=0;i<res.length;i++)
+			{
+				$("#maps").append("<div class=\"row\" style=\"position: relative;\" id=\"mapImgRow"+i+"\"><div class=\"col s6\" ><img id=\"mapImg"+i+"\" style=\"position: relative;\" src=\"data:image/png;base64,"+res[i]["img"]+"\"></div></div>");
+				$("#mapImg"+i).on('click',function(){
+					currCity = i.toString();
+					alert(currCity);
+
+					$("#img2").remove();
+					$("#mapImgRow"+i).append("<img src=\"./Avatars/mini/1.png\" id=\"img2\">");
+					$("#panel").remove();
+					$("#mapImgRow"+i).append("<div class=\"col s2\" >\n" + 
+					"	<div class=\"card\" style=\"display:none;margin-top: 0px;\" id=\"panel\">\n" + 
+					"        <div class=\"card-image\" id=\"panelImg\">\n" + 
+					"        </div>\n" + 
+					"        <div class=\"card-content\" id=\"panelContent\">\n" + 
+					"        </div>\n" + 
+					"	</div>\n" + 
+					"</div>");
+					var posSt = res[i]["NotAllowed"];
+					var array = posSt.split(',');
+					var j;
+					notAllowed = [];
+					for (j=0;j<array.length;j+=2)
+					{
+						var pos = array[j].toString()+'px,'+array[j+1].toString()+'px';
+						//alert(pos);
+						notAllowed.push(pos);
+					}
+				});
+			}
+		});
+		
 		$("#modal1").modal({complete:function(){
 			numSteps=0;
 		    $("#panel").hide();

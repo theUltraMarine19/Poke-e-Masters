@@ -1,6 +1,7 @@
 #!/bin/bash
 psql -h localhost -p $1 -d postgres -f drop.sql
 psql -h localhost -p $1 -d postgres -f create.sql
+psql -h localhost -p $1 -d postgres -f city.sql
 psql -h localhost -p $1 -d postgres -f pokemon.sql
 psql -h localhost -p $1 -d postgres -f pokemonBaseExp.sql
 psql -h localhost -p $1 -d postgres -f pokemonEvolve.sql
