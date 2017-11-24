@@ -1,13 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"
+    import="org.json.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  <link rel="stylesheet" href="./materialize/css/materialize.min.css">
+  <link rel="stylesheet" href="./DataTables/datatables.min.css">
  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script type="text/javascript" src="./javascript/jquery-3.2.1.min.js"></script>
   <script src="./materialize/js/materialize.min.js"></script>
+    <script type="text/javascript" src="./DataTables/datatables.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
   
 <title>Create Map</title>
@@ -33,6 +36,7 @@
 </style>
 <script>
 	$(document).ready(function(){
+		$('.modal').modal();
 		var i;
 		var currObs="";
 		var NotAllowed = [];
@@ -61,7 +65,6 @@
 	        html2canvas($("#cont"), {
 	            onrendered: function(canvas) {
 	            	var screenshot = canvas.toDataURL("image/png");
-	            	document.getElementById("textScreenshot").setAttribute("src", screenshot);
 	            	$.ajax({
 	            		  type: "POST",
 	            		  url: "CreateMap",
@@ -73,7 +76,7 @@
 	            		})
 	            },
 	            width: 920,
-	            height: 640
+	            height: 920
 	        });
 	    });
 		$("#cont").on('click',function(e){
@@ -98,6 +101,7 @@
 					NotAllowed.push(x+"px,"+y+"px");
 					$("#"+x+"-"+y).remove();
 					$("#cont").append("<img src=\"./Obstacles/"+currObs+".png\" style=\"position:absolute; height:20px; width:20px; left:"+x+"px; top:"+y+"px;\" id=\""+x+"-"+y+"\">");
+					
 					}
 				}
 			}
@@ -112,16 +116,35 @@
 					}
 				}
 			}
-			$("#p1").html("");
-			$("#p1").append(NotAllowed);
+		//$("#p1").html("");
+			//$("#p1").append(NotAllowed);
 		});
+		
 	});
 </script>
 </head>
 <body>
-<div class="container" >
-<div class="row" id="backgrounds">
 
+<div class="container">
+<div class="row" >
+<div class="col s4 offset-s4" >
+<h4 class="indigo-text" >Modify the city</h4>
+</div>
+</div>
+
+<div class ="row" >
+<div class="input-field col s6">
+<input id = "city_name" name="city_name" type = "text" class="validate" required>
+<label for="city_name">City Name</label>
+</div>
+<div class="input-field col s6">
+<input id = "base_level" name="base_level" class="validate" type = "text" required>
+<label for="base_level">Base Level</label>
+</div>
+</div>
+
+
+<div class="row" id="backgrounds">
 </div>
 
 <div class="row" > 
@@ -163,9 +186,10 @@
 </div>
 </div>
 </div>
+
 <input type="button" id="btnSave" value="Save Map"/>
-<p id="p1"></p>
-<img id="textScreenshot" src="">
 </div>
+<p id="p1"></p>
+
 </body>
 </html>

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONArray;
 
 import sun.misc.BASE64Decoder;
 
@@ -54,6 +55,8 @@ public class CreateMap extends HttpServlet {
 			else {
 				String id = (String) s.getAttribute("player_id");
 				if (id.equals("admin")) {
+					JSONArray poke_dex_info = Constants.getPokedexInfo();
+					request.setAttribute("pokemons",poke_dex_info);
 					RequestDispatcher view = request.getRequestDispatcher("createMap.jsp");
 					view.forward(request, response);
 				}
@@ -76,6 +79,15 @@ public class CreateMap extends HttpServlet {
 		String[] points = point.split(",");
 		
 		PrintWriter out = new PrintWriter(getServletContext().getRealPath("/Maps/map.txt"));
+		for (int i=-20;i<=480;i+=20) {
+				out.println("\'"+i+"px,-20px\',");
+				out.println("\'"+i+"px,340px\',");
+		}
+		for (int j=-20;j<=340;j+=20) {
+				out.println("\'-20px,"+j+"px\',");
+				out.println("\'480px,"+j+"px\',");
+		}
+		
 		for (int i=0;i<points.length-1;i+=2) {
 			if (i!=points.length-2)
 			{

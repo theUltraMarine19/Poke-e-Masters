@@ -73,11 +73,7 @@ public class gymLeader extends HttpServlet {
 		// TODO Auto-generated method stub
 
 		if(request.getMethod().equals("POST")){
-//			String function = request.getParameter("function");
-//			if(function == null){
-//				System.out.println("Shit");
-//				return;
-//			}
+
 			String name = request.getParameter("first_name");
 			String city = request.getParameter("city_name");
 			int avatar = Integer.parseInt(request.getParameter("avatar"));

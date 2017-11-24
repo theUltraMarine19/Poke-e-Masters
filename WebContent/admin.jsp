@@ -35,7 +35,7 @@ ul li {
 </div>
 <div class="row">
 <div class="col s4 offset-s1" >
-<a class="waves-effect waves-light btn" id = "map"><i class="material-icons right">edit</i>Add new Map</a>
+<a class="waves-effect waves-light btn" id = "map"><i class="material-icons right">edit</i>Modify Map</a>
 </div>
 </div>
 <div class="row">
