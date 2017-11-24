@@ -1153,4 +1153,176 @@ public class Constants {
 		}
 		return null;
 	}
+	
+	public static String PlayerAttack(String player_id1,String uid1,String attackId1,String player_id2,String uid2, String attackId2){
+		JSONObject json = new JSONObject();	
+		String table1 ="";
+		String table2 ="";
+		if(attackId2.equals("0")) {
+			table1="APPlayerPokemon";
+			table2="APPlayerPokemonMoves";
+		}
+		else {
+			table1="PlayerPokemon";
+			table2="PlayerPokemonMoves";
+		}	
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement user1PokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,Experience,BaseExp from PlayerPokemon as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
+			PreparedStatement user1MoveData = conn.prepareStatement("select a.attackID, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,ppm.PP from PlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=? and ppm.AttackID=?");){
+			user1PokeData.setString(1, player_id1);
+			user1PokeData.setString(2, uid1);
+			user1MoveData.setString(2, uid1);
+			user1MoveData.setString(3, attackId1);
+			user1MoveData.setString(1,player_id1);
+			PreparedStatement user2MoveData;
+			PreparedStatement user2PokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,Experience,BaseExp from "+table1+" as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
+			if(attackId2.equals("0")) {
+				user2MoveData = conn.prepareStatement("select a.attackID, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,ppm.PP from APPlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=?");
+			}
+			else {
+				user2MoveData = conn.prepareStatement("select a.attackID, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,ppm.PP from PlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=? and ppm.AttackID=?");
+				user2MoveData.setString(3, attackId2);
+			}
+			user2PokeData.setString(1, player_id2);
+			user2PokeData.setString(2, uid2);
+			user2MoveData.setString(2, uid2);
+			user2MoveData.setString(1,player_id2);
+			ResultSet r1 = user1PokeData.executeQuery();
+			ResultSet r2 = user1MoveData.executeQuery();
+			ResultSet r3 = user2PokeData.executeQuery();
+			ResultSet r4 = user2MoveData.executeQuery();
+			
+			r1.next();
+			r2.next();
+			r3.next();
+			r4.next();
+			json.put("status", true);
+			if(attackId2.equals("0")) {
+				int temp=0;
+				while(temp!=0) {
+					r4 = user2MoveData.executeQuery();
+					int rand = ThreadLocalRandom.current().nextInt(0, 4);
+					for(int i=0;i<=rand;i++)
+						r4.next();
+					temp=r4.getInt(6);
+				}
+			}
+			PreparedStatement User1PokeUpdate = conn.prepareStatement("Update PlayerPokemon set CurrentHP=? where ID=? and UID=?");
+			PreparedStatement User1PokeMoveUpdate = conn.prepareStatement("Update PlayerPokemonMoves set PP=? where ID=? and UID=? and AttackID=?");
+			PreparedStatement User2PokeUpdate = conn.prepareStatement("Update "+table1+" set CurrentHP=? where ID=? and UID=?");
+			PreparedStatement User2PokeMoveUpdate = conn.prepareStatement("Update "+table2+" set PP=? where ID=? and UID=? and AttackID=?");
+			int Level1 = r1.getInt(1);
+			int Level2 = r3.getInt(1);
+			int TotalHp1 = calculateStat(Level1,r1.getInt(2),r1.getInt(9),r1.getInt(8),true);
+			int TotalHp2 = calculateStat(Level2,r3.getInt(2),r3.getInt(9),r3.getInt(8),true);
+			int Attack1 = calculateStat(Level1,r1.getInt(4),r1.getInt(9),r1.getInt(8),false);
+			int Attack2 = calculateStat(Level2,r3.getInt(4),r3.getInt(9),r3.getInt(8),false);
+			int Defense1 = calculateStat(Level1,r1.getInt(5),r1.getInt(9),r1.getInt(8),false);
+			int Defense2 = calculateStat(Level2,r3.getInt(5),r3.getInt(9),r3.getInt(8),false);
+			int Speed1 = calculateStat(Level1,r1.getInt(6),r1.getInt(9),r1.getInt(8),false);
+			int Speed2 = calculateStat(Level2,r3.getInt(6),r3.getInt(9),r3.getInt(8),false);
+			int User1DoneDamage =(int) (((((2*Level1/5.0)+2)*r2.getInt(3)*(Attack1/Defense2)/50)+2)*(ThreadLocalRandom.current().nextInt(850, 1000)/1000.0));
+			int User2DoneDamage =(int) (((((2*Level2/5.0)+2)*r4.getInt(3)*(Attack2/Defense1)/50)+2)*(ThreadLocalRandom.current().nextInt(850, 1000)/1000.0));
+			//Add STAB effect and Type effect after type effect table is populated
+			if(r2.getInt(3)==0) {
+				User1DoneDamage=0;
+			}
+			if(r4.getInt(3)==0)
+				User2DoneDamage=0;
+			int CurrHp2=Math.max(0, r3.getInt(3)-User1DoneDamage);
+			int CurrHp1=Math.max(0, r1.getInt(3)-User2DoneDamage);
+			User1PokeUpdate.setInt(1,CurrHp1);
+			User1PokeUpdate.setString(2, player_id1);
+			User1PokeUpdate.setString(3, uid1);
+			User2PokeUpdate.setInt(1, CurrHp2);
+			User2PokeUpdate.setString(2, player_id2);
+			User2PokeUpdate.setString(3, uid2);
+			User1PokeMoveUpdate.setInt(1,r2.getInt(6)-1);
+			User1PokeMoveUpdate.setString(2,player_id1);
+			User1PokeMoveUpdate.setString(3,uid1);
+			User1PokeMoveUpdate.setString(4,r2.getString(1));
+			User1PokeMoveUpdate.setInt(1,r4.getInt(6)-1);
+			User1PokeMoveUpdate.setString(2,player_id2);
+			User1PokeMoveUpdate.setString(3,uid1);
+			User1PokeMoveUpdate.setString(4,r4.getString(1));
+			String Message = "";
+			try {
+				conn.setAutoCommit(false);
+				if(CurrHp2!=0 || (CurrHp2==0 && Speed2>Speed1)) {
+					User1PokeUpdate.executeUpdate();
+					User2PokeMoveUpdate.executeUpdate();
+					json.put("User2DoneDamage", User2DoneDamage);
+					Message = Message + "The "+r3.getString(10)+ " used "+r4.getString(2)+ " and caused "+Integer.toString(User2DoneDamage)+"HP damage.";
+					if(CurrHp1==0 && !attackId2.equals("0")) {
+						PreparedStatement User2PokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set (Experience,Level)=(?,?) where ID=? and UID=?");
+						int experience =1 +(int) ((r3.getInt(12)*Level2/5.0)*(Math.pow((2*Level1)+10, 2.5)/Math.pow(Level1+Level2+10, 2.5)));
+						int Level21 = Level2+1;
+						int nextLevelExperience = (int) (((6/5.0)*Level21*Level21*Level21)-(15*Level21*Level21)+(100*Level21)-140);
+						Message = Message + "\nThe "+r1.getString(10)+ " fainted.\nThe "+r3.getString(10)+" gained "+Integer.toString(experience)+" exp points.";
+						User2PokeExpUpdate.setInt(1, r3.getInt(11)+experience);
+						if(nextLevelExperience<=r3.getInt(11)+experience) {
+							User2PokeExpUpdate.setInt(2, Level21);
+							Message = Message + "\nThe "+r3.getString(10)+ " has leveled up.";
+						}
+						else {
+							User2PokeExpUpdate.setInt(2, Level2);
+						}
+						User2PokeExpUpdate.setString(3, player_id2);
+						User2PokeExpUpdate.setString(4, uid2);
+						User2PokeExpUpdate.executeUpdate();
+					}
+				}
+				else {
+					json.put("User2DoneDamage", 0);
+				}
+				if(CurrHp1!=0 || (CurrHp1==0 && Speed1>Speed2)) {
+					User2PokeUpdate.executeUpdate();
+					User1PokeMoveUpdate.executeUpdate();
+					json.put("User1DoneDamage", User1DoneDamage);
+					json.put("PP", r2.getInt(5)-1);
+					Message = Message + "\nThe "+r1.getString(10)+ " used "+r2.getString(2)+ " and caused "+Integer.toString(User1DoneDamage)+"HP damage.";
+					if(CurrHp2==0) {
+						PreparedStatement User1PokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set (Experience,Level)=(?,?) where ID=? and UID=?");
+						int experience =1 +(int) ((r1.getInt(12)*Level1/5.0)*(Math.pow((2*Level2)+10, 2.5)/Math.pow(Level1+Level2+10, 2.5)));
+						int Level11 = Level1+1;
+						int nextLevelExperience = (int) (((6/5.0)*Level11*Level11*Level11)-(15*Level11*Level11)+(100*Level11)-140);
+						Message = Message + "\nThe "+r3.getString(10)+ " fainted.\nThe "+r1.getString(10)+" gained "+Integer.toString(experience)+" exp points.";
+						User1PokeExpUpdate.setInt(1, r1.getInt(11)+experience);
+						if(nextLevelExperience<=r1.getInt(11)+experience) {
+							User1PokeExpUpdate.setInt(2, Level11);
+							Message = Message + "\nYour "+r1.getString(10)+ " has leveled up.";
+						}
+						else {
+							User1PokeExpUpdate.setInt(2, Level1);
+						}
+						User1PokeExpUpdate.setString(3, player_id1);
+						User1PokeExpUpdate.setString(4, uid1);
+						User1PokeExpUpdate.executeUpdate();
+					}
+				}
+				else {
+					json.put("UserDoneDamage", 0);
+					if(attackId2.equals("0"))
+						json.put("PP", r2.getInt(6));
+				}
+				conn.commit();
+				conn.setAutoCommit(true);
+				json.put("UserCurrHP", CurrHp1);
+				json.put("WildCurrHP", CurrHp2);
+				json.put("UserHp", TotalHp1);
+				json.put("WildHp", TotalHp2);
+				json.put("message", Message);
+			}
+			catch(Exception e) {
+				System.out.println("Error : "+e);
+				conn.rollback();
+				return null;
+			}
+			return json.toString();
+		}
+		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
 }
