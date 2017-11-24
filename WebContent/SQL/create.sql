@@ -59,6 +59,7 @@ CREATE TABLE Player
       email_verified VARCHAR(10),
       avatar_chosen INT DEFAULT 0,
       starter_pokemon INT DEFAULT 0,
+      online INT DEFAULT 0,
       PRIMARY KEY (ID)
 );
 
