@@ -242,15 +242,23 @@ public class Constants {
 	
 	public static String addPlayer(String name,String nick_name,String password,String email){
 		try(Connection conn = DriverManager.getConnection(Constants.DB,Constants.Name,Constants.Password);
-				PreparedStatement pstmt = conn.prepareStatement("INSERT INTO PLAYER(NAME,NICKNAME,ID,PASSWORD,EMAIL,email_verified) VALUES(?,?,nextval('UserID'),?,?,?)");){
+				PreparedStatement p2 = conn.prepareStatement("select nextval('UserID')");
+				PreparedStatement pstmt = conn.prepareStatement("INSERT INTO PLAYER(NAME,NICKNAME,ID,PASSWORD,EMAIL,email_verified) VALUES(?,?,?,?,?,?)");){
 				pstmt.setString(1,name);
 				pstmt.setString(2, nick_name);
-				pstmt.setString(3, password);
-				pstmt.setString(4, email);
+				pstmt.setString(4, password);
+				pstmt.setString(5, email);
 				String player_token = Constants.generateRandomToken();
-				pstmt.setString(5, player_token);
+				pstmt.setString(6, player_token);
+				ResultSet r1 = p2.executeQuery();
+				r1.next();
+				String player_id = r1.getString(1);
+				pstmt.setString(3, player_id);
 				String verify_url = "http://localhost:8080/PokeEMasters/EmailVerify?email="+email+"&token="+player_token;
 				pstmt.executeUpdate();
+				PreparedStatement p1 = conn.prepareStatement("insert into hasitem (select 5,?,itemid from item)");
+				p1.setString(1, player_id);
+				p1.executeUpdate();
 				JSONObject json = new JSONObject();
 				json.put("success", true);
 				json.put("verify_url", verify_url);
@@ -1321,6 +1329,35 @@ public class Constants {
 			return json.toString();
 		}
 		catch(Exception e){
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
+	
+	public static String AddItems(String player_id,int pb,int mb,int sp,int mp,int lp){
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("update hasitem set count=count+? where id=? and itemid=?");){
+			pstmt.setString(2, player_id);
+			pstmt.setInt(1, pb);
+			pstmt.setString(3, "1");
+			pstmt.executeUpdate();
+			pstmt.setInt(1, mb);
+			pstmt.setString(3, "2");
+			pstmt.executeUpdate();
+			pstmt.setInt(1, sp);
+			pstmt.setString(3, "3");
+			pstmt.executeUpdate();
+			pstmt.setInt(1, mp);
+			pstmt.setString(3, "4");
+			pstmt.executeUpdate();
+			pstmt.setInt(1, lp);
+			pstmt.setString(3, "5");
+			pstmt.executeUpdate();			
+			json.put("success",true);
+			return json.toString();
+		}
+		catch(Exception e){			
 			System.out.println("Error : "+e);
 		}
 		return null;
