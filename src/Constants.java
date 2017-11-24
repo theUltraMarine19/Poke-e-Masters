@@ -1421,4 +1421,23 @@ public class Constants {
 		}
 		return null;
 	}
+	
+	public static JSONArray getAllPlayersInfo(String player_id){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select id from player where id<>? and id<>'admin'");){
+			pstmt.setString(1, player_id);
+			ResultSet r = pstmt.executeQuery();
+			JSONArray arr = new JSONArray();
+			while(r.next()){
+				JSONObject temp = Constants.getPlayerProfileInfo(r.getString(1));
+				temp.put("player_id",r.getString(1));
+				arr.put(temp);
+			}
+			return arr;
+		}
+		catch(Exception e){			
+			System.out.println("Error : "+e);
+		}
+		return null;
+	}
 }

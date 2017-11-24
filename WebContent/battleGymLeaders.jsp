@@ -165,6 +165,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 		$("#modal1").modal({complete:function(){
 			$("#playerTeam").html("");
 			$("#gymPokemons").html("");
+			$("#pokemoves").html("");
 			$("#msg").html("");
 			$("#selectedpokemon").css("visibility","hidden");
 			$("#opponentpokemon").css("visibility","hidden");
