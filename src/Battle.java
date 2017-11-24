@@ -75,10 +75,12 @@ public class Battle extends HttpServlet {
 				}
 			}
 			else if(battleType.equals("gym")) {
+				System.out.println("Hello 1");
 				String state = request.getParameter("state");
 				if(state.equals("Battle begin")) {
-					JSONObject json=null;
-					String apid = request.getParameter("apid");
+					JSONObject json=new JSONObject();					
+					String apid = request.getParameter("apid").substring(4);
+					System.out.println("Hello "+apid);
 					try {
 						json.put("player", new JSONArray(Constants.getPlayerPokemonTeamInfo(player_id)));
 						json.put("gymLeader", new JSONArray(Constants.getGymLeaderTeamInfo(apid)));

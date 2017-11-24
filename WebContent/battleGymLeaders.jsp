@@ -25,7 +25,7 @@
 <% 
 for(int i=0;i< Integer.parseInt(num) ;i++){
 	String id="\"gyml"+(i+1)+"\"";	
-    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><img style=\"height:100px\" src=\"./GymLeaders/front/1.png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>Santalune City</p><div class=\"divider\"></div><a class=\"battle\" href=\"#\" >Fight</a></div></div></div></div>");
+    out.println("<div class=\"col s2\"><div class=\"card\"><div id="+id+" style=\"visibility:hidden;\"><div class=\"card-image\"><img style=\"height:100px\" src=\"./GymLeaders/1.png\"></div><div class=\"card-content\"><h6 class=\"indigo-text\" ><strong>Bulbasaur</strong></h6><p>Santalune City</p><div class=\"divider\"></div><a class=\"battle\" href=\"#\" >Fight</a></div></div></div></div>");
 }
 %>
 </div>
@@ -116,7 +116,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 		for(i=0;i<res.length;i++){
 			var id = rowid +"_"+(i+1); 
 			$("#"+rowid).append("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+res[i].pid+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:8px;\" class=\"indigo-text\" ><strong>"+res[i].name+"</strong></h6><p style=\"font-size:small;\">#Partner : "+res[i].uid+"</p><p style=\"font-size:small;\">Level : "+res[i].level+"</p><p style=\"font-size:small;\">HP : "+res[i].currenthp+"/"+res[i].basehp+"</p><p style=\"display:none;\">"+res[i].pid+"</p></div></div></div></div>");
-			if(rowid=="playerTeam"){
+			if(rowid=="playerTeam"){				
 				$("#"+id).click(function(){
 					var x = $(this).children(".card-content").children();
 					var poketeamno = $(this).attr("id");
@@ -127,6 +127,8 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 					$(pokeInfo[2]).text($(x[2]).text());
 					$(pokeInfo[3]).text($(x[3]).text());
 					$(pokeInfo[4]).text(poketeamno);
+					/* $.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()}) */
+					$("#selectedpokemon").css("visibility","visible");
 				});
 			}
 		}
@@ -135,6 +137,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 	$(document).ready(function(){
 		$("#modal1").modal({complete:function(){
 			$("#playerTeam").html("");
+			$("#gymPokemons").html("");
 			$("#msg").html("");
 			$("#selectedpokemon").css("visibility","hidden");
 			$("#opponentpokemon").css("visibility","hidden");

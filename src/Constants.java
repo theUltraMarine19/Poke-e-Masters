@@ -16,8 +16,8 @@ import com.sun.corba.se.impl.protocol.giopmsgheaders.ReplyMessage_1_0;
 
 public class Constants {
 //	public static String Name = "hp",Password = "",DB = "jdbc:postgresql://localhost:6020/postgres";
-//	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
-	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
+	public static String Name = "jeyasoorya",Password = "",DB = "jdbc:postgresql://localhost:6010/postgres";
+//	public static String Name = "aadhavan",Password = "",DB = "jdbc:postgresql://localhost:6030/postgres";
 //	 public static String Name = "arijit",Password = "",DB = "jdbc:postgresql://localhost:5940/postgres";
 	private static String from = "150050101@iitb.ac.in",pass_word = "soorya#0412";
 
@@ -156,6 +156,7 @@ public class Constants {
 			while (rs.next())
 			{
 				JSONObject obj = new JSONObject();
+				obj.put("apid",rs.getString(1));
 				obj.put("name", rs.getString(2));
 				obj.put("city", rs.getString(3));
 				obj.put("avatar", rs.getInt(4));
@@ -1291,10 +1292,10 @@ public class Constants {
 			User1PokeMoveUpdate.setString(2,player_id1);
 			User1PokeMoveUpdate.setString(3,uid1);
 			User1PokeMoveUpdate.setString(4,r2.getString(1));
-			User1PokeMoveUpdate.setInt(1,r4.getInt(6)-1);
-			User1PokeMoveUpdate.setString(2,player_id2);
-			User1PokeMoveUpdate.setString(3,uid1);
-			User1PokeMoveUpdate.setString(4,r4.getString(1));
+			User2PokeMoveUpdate.setInt(1,r4.getInt(6)-1);
+			User2PokeMoveUpdate.setString(2,player_id2);
+			User2PokeMoveUpdate.setString(3,uid2);
+			User2PokeMoveUpdate.setString(4,r4.getString(1));
 			String Message = "";
 			try {
 				conn.setAutoCommit(false);
