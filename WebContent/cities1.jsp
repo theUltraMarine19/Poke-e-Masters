@@ -389,6 +389,9 @@
 							for(i1=0;i1<res.length;i1++){
 								var a_id = "attack"+(i1+1);
 								$("#pokemoves").append("<div class=\"col s3\"><div class=\"card hoverable\"><div id=\""+a_id+"\" class=\"card-content\"><p style=\"font-size:12px;\">#"+res[i1].AttackID+" "+res[i1].Name+"</p><p style=\"font-size:10px;\">PP : "+res[i1].PP+"</p><p style=\"display:none\">"+res[i1].uid+"</p></div></div></div>");
+								if(res[i1].PP==0){
+									continue;
+								}
 								$("#"+a_id).click(function(){
 									var pokeAttack = $(this);									
 									var a_info = $(this).children("p");

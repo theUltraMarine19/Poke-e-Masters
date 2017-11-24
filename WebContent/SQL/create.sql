@@ -59,6 +59,7 @@ CREATE TABLE Player
       email_verified VARCHAR(10),
       avatar_chosen INT DEFAULT 0,
       starter_pokemon INT DEFAULT 0,
+      online INT DEFAULT 0,
       PRIMARY KEY (ID)
 );
 
@@ -248,6 +249,16 @@ CREATE TABLE APPlayerPokemonMoves
       PRIMARY KEY(ID,UID,AttackID),
       FOREIGN KEY(ID,UID) REFERENCES APPlayerPokemon(ID,UID) ON DELETE CASCADE,
       FOREIGN KEY(AttackID) REFERENCES Attack(AttackID) ON DELETE CASCADE
+);
+
+CREATE TABLE MessageExchange
+(
+      FromID VARCHAR(8),
+      ToID VARCHAR(8),      
+      MessageType VARCHAR(20),
+      Message VARCHAR(100),
+      FOREIGN KEY(FromID) REFERENCES Player(ID) ON DELETE CASCADE,
+      FOREIGN KEY(ToID) REFERENCES Player(ID) ON DELETE CASCADE
 );
 
 CREATE SEQUENCE UserID START 1;

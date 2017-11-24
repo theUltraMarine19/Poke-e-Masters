@@ -99,8 +99,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 	function fillTeam(res){
 		var i;
 		for(i=0;i<res.length;i++){
-			var id = "#gyml"+(i+1);
-			
+			var id = "#gyml"+(i+1);			
 			var c1 = $(id).children();
 			$(c1[0]).children("img").attr("src","./GymLeaders/"+res[i].avatar+".png")
 			var c2 = $(c1[1]).children();
@@ -116,7 +115,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 		for(i=0;i<res.length;i++){
 			var id = rowid +"_"+(i+1); 
 			$("#"+rowid).append("<div class=\"col s2\"><div class=\"card hoverable\"><div id="+id+"><div class=\"card-image\"><img style=\"height:100px;\" src=\"./Pokemons/front/"+res[i].pid+".png\"></div><div class=\"card-content\"><h6 style=\"font-size:8px;\" class=\"indigo-text\" ><strong>"+res[i].name+"</strong></h6><p style=\"font-size:small;\">#Partner : "+res[i].uid+"</p><p style=\"font-size:small;\">Level : "+res[i].level+"</p><p style=\"font-size:small;\">HP : "+res[i].currenthp+"/"+res[i].basehp+"</p><p style=\"display:none;\">"+res[i].pid+"</p></div></div></div></div>");
-			if(rowid=="playerTeam"){				
+			if(rowid=="playerTeam"&&res[i].currenthp!=0){				
 				$("#"+id).click(function(){
 					var x = $(this).children(".card-content").children();
 					var poketeamno = $(this).attr("id");
@@ -127,10 +126,112 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 					$(pokeInfo[2]).text($(x[2]).text());
 					$(pokeInfo[3]).text($(x[3]).text());
 					$(pokeInfo[4]).text(poketeamno);
-					/* $.post("Profile",{"function":"Get pokemon moves","uid":$(c[0]).text()}) */
+					$.post("Profile",{"function":"Get pokemon moves","uid":$(x[1]).text()},function(data){
+						var res = JSON.parse(data);
+						$("#pokemoves").html("");
+						var i1;						
+						for(i1=0;i1<res.length;i1++){
+							var a_id = "attack"+(i1+1);
+							$("#pokemoves").append("<div class=\"col s3\"><div class=\"card hoverable\"><div id=\""+a_id+"\" class=\"card-content\"><p style=\"font-size:12px;\">#"+res[i1].AttackID+" "+res[i1].Name+"</p><p style=\"font-size:10px;\">PP : "+res[i1].PP+"</p><p style=\"display:none\">"+res[i1].uid+"</p></div></div></div>");	
+							if(res[i1].PP==0){
+								continue;
+							}
+							$("#"+a_id).click(function(){
+								var attackClick = $(this);
+								var a_info = $(this).children("p");
+								var attackId = ($(a_info[0]).text()).split(" ")[0];
+								$.post("Battle",{"type":"gym","state":"attack","uid":$("#selectedpokemon").children(".card-content").children("p").first().text().split(" ")[2],"a_id":attackId,"apid":select_apid,"ap_pid":$("#opponentpokemon").children(".card-content").children("p").first().text().split(" ")[2]},function(data){
+									res = JSON.parse(data);
+									if(!res.status){
+										alert(data);
+									}
+									else{
+										var history = $("#msg").html();
+										$("#msg").html("<p>"+res.message+"</p>"+history);
+										var x1 = $("#selectedpokemon").children(".card-content").children("p");
+										var x2 = $("#opponentpokemon").children(".card-content").children("p");
+										var sel_x1 = $("#"+$(x1[3]).text()).children(".card-content").children("p")[2];
+										var sel_x2 = $("#"+$(x2[3]).text()).children(".card-content").children("p")[2];
+										$(x1[2]).text("HP : "+res.UserCurrHP+"/"+res.UserHp);
+										$(x2[2]).text("HP : "+res.WildCurrHP+"/"+res.WildHp);
+										$(sel_x1).text("HP : "+res.UserCurrHP+"/"+res.UserHp);
+										$(sel_x2).text("HP : "+res.WildCurrHP+"/"+res.WildHp);
+										$(a_info[1]).text("PP : "+res.PP);										
+										if(res.PP == 0){					
+											$(attackClick).off("click");
+										}
+										if(res.UserCurrHP==0 && res.WildCurrHP==0){
+											alert("Both pokemons fainted");
+											$("#pokemoves").css("display","none");
+											$("#selectedpokemon").css("visibility","hidden");
+											$("#"+$(x1[3]).text()).off("click");
+											var nextid = "gymPokemons_"+(parseInt($(x2[3]).text().split("_")[1])+1);
+											var exists = $("#"+nextid);
+											if(exists.length!=0){
+												var x = $("#"+nextid).children(".card-content").children();
+												var poketeamno = nextid;
+												$("#opponentpokemon").children(".card-image").children("img").attr("src","./Pokemons/front/"+$(x[4]).text()+".png");
+												var pokeInfo = $("#opponentpokemon").children(".card-content").children();
+												$(pokeInfo[0]).children("strong").text($(x[0]).children("strong").text());
+												$(pokeInfo[1]).text($(x[1]).text());
+												$(pokeInfo[2]).text($(x[2]).text());
+												$(pokeInfo[3]).text($(x[3]).text());
+												$(pokeInfo[4]).text(poketeamno);
+												$("#opponentpokemon").css("visibility","visible");
+											}
+											else{
+												alert("You have won(Draw)");
+												$("#opponentpokemon").css("visibility","hidden");
+											}
+										}
+										else if(res.UserCurrHP==0){
+											alert("Your pokemon is unable to battle, Choose another or run away");
+											$("#pokemoves").html("");
+											$("#selectedpokemon").css("visibility","hidden");
+											$("#"+$(x1[3]).text()).off("click");
+										}
+										else if(res.WildCurrHP==0){
+											alert("Gym leader's pokemon is unable to battle");
+											var nextid = "gymPokemons_"+(parseInt($(x2[3]).text().split("_")[1])+1);
+											var exists = $("#"+nextid);
+											if(exists.length!=0){
+												var x = $("#"+nextid).children(".card-content").children();
+												var poketeamno = nextid;
+												$("#opponentpokemon").children(".card-image").children("img").attr("src","./Pokemons/front/"+$(x[4]).text()+".png");
+												var pokeInfo = $("#opponentpokemon").children(".card-content").children();
+												$(pokeInfo[0]).children("strong").text($(x[0]).children("strong").text());
+												$(pokeInfo[1]).text($(x[1]).text());
+												$(pokeInfo[2]).text($(x[2]).text());
+												$(pokeInfo[3]).text($(x[3]).text());
+												$(pokeInfo[4]).text(poketeamno);
+												$("#opponentpokemon").css("visibility","visible");
+											}
+											else{
+												alert("You have won");												
+												$("#opponentpokemon").css("visibility","hidden");
+												$("#pokemoves").html("");
+											}
+										}
+									}									
+								});
+							});
+						}
+					});
 					$("#selectedpokemon").css("visibility","visible");
 				});
 			}
+		}
+		if(rowid=="gymPokemons"){
+			var x = $("#gymPokemons_1").children(".card-content").children();
+			var poketeamno = "gymPokemons_1";
+			$("#opponentpokemon").children(".card-image").children("img").attr("src","./Pokemons/front/"+$(x[4]).text()+".png");
+			var pokeInfo = $("#opponentpokemon").children(".card-content").children();
+			$(pokeInfo[0]).children("strong").text($(x[0]).children("strong").text());
+			$(pokeInfo[1]).text($(x[1]).text());
+			$(pokeInfo[2]).text($(x[2]).text());
+			$(pokeInfo[3]).text($(x[3]).text());
+			$(pokeInfo[4]).text(poketeamno);
+			$("#opponentpokemon").css("visibility","visible");
 		}
 	}
 	
@@ -138,6 +239,7 @@ for(int i=0;i< Integer.parseInt(num) ;i++){
 		$("#modal1").modal({complete:function(){
 			$("#playerTeam").html("");
 			$("#gymPokemons").html("");
+			$("#pokemoves").html("");
 			$("#msg").html("");
 			$("#selectedpokemon").css("visibility","hidden");
 			$("#opponentpokemon").css("visibility","hidden");

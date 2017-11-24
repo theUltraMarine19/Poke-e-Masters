@@ -38,6 +38,7 @@ public class Logout extends HttpServlet {
 				response.sendRedirect("Login");		
 			}			
 		}
+		Constants.Logout(s.getAttribute("player_id").toString());
 		s.invalidate();
 		response.sendRedirect("Login");
 	}

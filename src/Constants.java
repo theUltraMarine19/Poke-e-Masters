@@ -310,6 +310,9 @@ public class Constants {
 				if(flag_password){
 					if(flag_token){
 						try{
+							PreparedStatement onlineSet = conn.prepareStatement("update Player set online=1 where email=?");
+							onlineSet.setString(1, email);
+							onlineSet.executeUpdate();
 							json.put("success", true);
 							json.put("status", "succesful");
 							json.put("userid",id);
@@ -626,10 +629,10 @@ public class Constants {
 				temp.put("level",r.getInt(4));
 				String[] types = r.getString(7).split(",");
 				temp.put("types",types);
-				temp.put("currenthp", r.getInt(5));
 				int ev=r.getInt(8),iv=r.getInt(9),lvl=r.getInt(4);
 				int x = (int)Math.floor(((r.getInt(6)+iv)*2 + Math.floor(Math.ceil(Math.sqrt(ev))/4))*lvl/100)+lvl+10;
 				temp.put("basehp",x);
+				temp.put("currenthp", x);
 				arr.put(temp);
 				pstmt1.setInt(1, x);
 				pstmt1.setString(2, apid);
@@ -1231,7 +1234,7 @@ public class Constants {
 			user1MoveData.setString(3, attackId1);
 			user1MoveData.setString(1,player_id1);
 			PreparedStatement user2MoveData;
-			PreparedStatement user2PokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,Experience,BaseExp from "+table1+" as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
+			PreparedStatement user2PokeData = conn.prepareStatement("select Level,BaseHP,CurrentHP,BaseAttack,BaseDefence,BaseSpeed,TypeList,IV,EV,p.name,BaseExp from "+table1+" as pp, Pokemon as p where pp.PID=p.PID and pp.ID=? and pp.UID=?");
 			if(attackId2.equals("0")) {
 				user2MoveData = conn.prepareStatement("select a.attackID, a.Name, a.Power, (a.Accuracy/100) as Accuracy, a.Type,ppm.PP from APPlayerPokemonMoves as ppm, Attack as a where ppm.AttackID=a.AttackID and ppm.ID=? and ppm.UID=?");
 			}
@@ -1247,11 +1250,12 @@ public class Constants {
 			ResultSet r2 = user1MoveData.executeQuery();
 			ResultSet r3 = user2PokeData.executeQuery();
 			ResultSet r4 = user2MoveData.executeQuery();
-			
+			System.out.println("here0");
 			r1.next();
 			r2.next();
 			r3.next();
 			r4.next();
+			System.out.println("here1");
 			json.put("status", true);
 			if(attackId2.equals("0")) {
 				int temp=0;
@@ -1335,7 +1339,7 @@ public class Constants {
 					User2PokeUpdate.executeUpdate();
 					User1PokeMoveUpdate.executeUpdate();
 					json.put("User1DoneDamage", User1DoneDamage);
-					json.put("PP", r2.getInt(5)-1);
+					json.put("PP", r2.getInt(6)-1);
 					Message = Message + "\nThe "+r1.getString(10)+ " used "+r2.getString(2)+ " and caused "+Integer.toString(User1DoneDamage)+"HP damage.";
 					if(CurrHp2==0) {
 						PreparedStatement User1PokeExpUpdate = conn.prepareStatement("Update PlayerPokemon set (Experience,Level)=(?,?) where ID=? and UID=?");
@@ -1378,6 +1382,7 @@ public class Constants {
 		}
 		catch(Exception e){
 			System.out.println("Error : "+e);
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -1444,6 +1449,19 @@ public class Constants {
 				cities.put(json);
 			}
 					
+	
+	public static JSONArray getAllPlayersInfo(String player_id){
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement pstmt = conn.prepareStatement("select id from player where id<>? and id<>'admin' and online=1");){
+			pstmt.setString(1, player_id);
+			ResultSet r = pstmt.executeQuery();
+			JSONArray arr = new JSONArray();
+			while(r.next()){
+				JSONObject temp = Constants.getPlayerProfileInfo(r.getString(1));
+				temp.put("player_id",r.getString(1));
+				arr.put(temp);
+			}
+			return arr;
 		}
 		catch(Exception e){			
 			System.out.println("Error : "+e);
@@ -1468,5 +1486,72 @@ public class Constants {
 			catch(Exception e){			
 				System.out.println("Error : "+e);
 			}
+		return null;
+	}
+	
+	public static void Logout(String player_id) {
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement onlineSet = conn.prepareStatement("update Player set online=0 where id=?")) {
+			onlineSet.setString(1, player_id);
+			onlineSet.executeUpdate();
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
+	}
+	
+	public static String SendMessage(String from, String to, String messageType, String message) {
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement onlineSet = conn.prepareStatement("insert into MessageExchange values (?,?,?,?)")) {
+			onlineSet.setString(1, from);
+			onlineSet.setString(2, to);
+			onlineSet.setString(3, messageType);
+			onlineSet.setString(4, message);
+			if(onlineSet.executeUpdate()>0) {
+				json.put("status", true);
+			}
+			else {
+				json.put("status", false);
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
+		return json.toString();
+	}
+	
+	public static String ViewChallenge(String player_id, boolean fullResponse) {
+		JSONObject json = new JSONObject();
+		try(Connection conn = DriverManager.getConnection(DB,Name,Password);
+			PreparedStatement Challenges = conn.prepareStatement("select FromID from MessageExchange where ToId=? and MessageType='Battle Challenge");) {
+			Challenges.setString(1, player_id);
+			ResultSet challengeSet = Challenges.executeQuery();
+			if(!fullResponse) {
+				int count = 0;
+				while (challengeSet.next()) count++;
+				if(count > 0) {
+					json.put("status", true);
+					json.put("message", "You have "+Integer.toString(count)+" new challenges.");
+				}
+				else 
+					json.put("status", false);
+			}
+			else {
+				JSONArray arr = new JSONArray();
+				while(challengeSet.next()){
+					JSONObject temp = Constants.getPlayerProfileInfo(challengeSet.getString(1));
+					temp.put("player_id",challengeSet.getString(1));
+					arr.put(temp);
+				}
+				json.put("status", true);
+				json.put("challengers", arr);
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Error : "+e);
+		}
+		return json.toString();
+>>>>>>> origin/master
 	}
 }
